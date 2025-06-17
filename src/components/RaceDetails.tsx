@@ -103,7 +103,7 @@ export const RaceDetails = ({ race, onEdit, onClose }: RaceDetailsProps) => {
                 <div className="ml-8 space-y-1">
                   {race.kitPickupDates.map((pickup, index) => (
                     <p key={index} className="text-green-700">
-                      {format(pickup.date, "dd/MM/yyyy")} às {pickup.time}
+                      {format(pickup.date, "dd/MM/yyyy")} de {pickup.startTime} até {pickup.endTime}
                     </p>
                   ))}
                 </div>

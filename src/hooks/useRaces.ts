@@ -20,7 +20,8 @@ export const useRaces = () => {
             ? 'to-be-defined' 
             : race.kitPickupDates?.map((pickup: any) => ({
                 date: new Date(pickup.date),
-                time: pickup.time,
+                startTime: pickup.startTime || pickup.time, // backward compatibility
+                endTime: pickup.endTime || pickup.time, // backward compatibility
               })) || [],
           createdAt: new Date(race.createdAt),
           updatedAt: new Date(race.updatedAt),
@@ -57,7 +58,8 @@ export const useRaces = () => {
         ? 'to-be-defined'
         : raceData.kitPickupDates.map(pickup => ({
             date: new Date(pickup.date),
-            time: pickup.time,
+            startTime: pickup.startTime,
+            endTime: pickup.endTime,
           })),
       registrationProof: raceData.registrationProofUrl ? {
         type: raceData.registrationProofType || 'link',
@@ -89,7 +91,8 @@ export const useRaces = () => {
         ? 'to-be-defined'
         : raceData.kitPickupDates.map(pickup => ({
             date: new Date(pickup.date),
-            time: pickup.time,
+            startTime: pickup.startTime,
+            endTime: pickup.endTime,
           })),
       registrationProof: raceData.registrationProofUrl ? {
         type: raceData.registrationProofType || 'link',

@@ -9,7 +9,8 @@ export interface Race {
   kitPickupAddress: string;
   kitPickupDates: Array<{
     date: Date;
-    time: string;
+    startTime: string;
+    endTime: string;
   }> | 'to-be-defined';
   registrationProof?: {
     type: 'file' | 'link';
@@ -30,7 +31,8 @@ export interface RaceFormData {
   kitPickupAddress: string;
   kitPickupDates: Array<{
     date: string;
-    time: string;
+    startTime: string;
+    endTime: string;
   }> | 'to-be-defined';
   registrationProofUrl?: string;
   registrationProofType?: 'file' | 'link';

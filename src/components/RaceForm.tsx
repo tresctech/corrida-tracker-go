@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import { useForm, useFieldArray } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -21,7 +20,8 @@ import { useToast } from "@/hooks/use-toast";
 
 const kitPickupSchema = z.object({
   date: z.string().min(1, "Data é obrigatória"),
-  time: z.string().min(1, "Horário é obrigatório"),
+  startTime: z.string().min(1, "Horário de início é obrigatório"),
+  endTime: z.string().min(1, "Horário de fim é obrigatório"),
 });
 
 // Separate schema for form data to handle the array properly
@@ -55,15 +55,16 @@ export const RaceForm = ({ race, onSubmit, onCancel }: RaceFormProps) => {
 
   const getDefaultKitPickupDates = () => {
     if (race?.kitPickupDates === 'to-be-defined') {
-      return [{ date: "", time: "" }];
+      return [{ date: "", startTime: "", endTime: "" }];
     }
     if (race?.kitPickupDates && Array.isArray(race.kitPickupDates)) {
       return race.kitPickupDates.map(pickup => ({
         date: format(pickup.date, "yyyy-MM-dd"),
-        time: pickup.time,
+        startTime: pickup.startTime,
+        endTime: pickup.endTime,
       }));
     }
-    return [{ date: "", time: "" }];
+    return [{ date: "", startTime: "", endTime: "" }];
   };
 
   const {
@@ -89,7 +90,7 @@ export const RaceForm = ({ race, onSubmit, onCancel }: RaceFormProps) => {
     } : {
       status: "upcoming",
       registrationProofType: "link",
-      kitPickupDates: [{ date: "", time: "" }],
+      kitPickupDates: [{ date: "", startTime: "", endTime: "" }],
     },
   });
 
@@ -138,7 +139,7 @@ export const RaceForm = ({ race, onSubmit, onCancel }: RaceFormProps) => {
     } else {
       // Ensure we have at least one entry when switching back
       if (fields.length === 0) {
-        append({ date: "", time: "" });
+        append({ date: "", startTime: "", endTime: "" });
       }
     }
   };
@@ -297,7 +298,7 @@ export const RaceForm = ({ race, onSubmit, onCancel }: RaceFormProps) => {
               <div className="space-y-3">
                 {fields.map((field, index) => (
                   <div key={field.id} className="flex gap-2 items-end">
-                    <div className="flex-1 grid grid-cols-2 gap-2">
+                    <div className="flex-1 grid grid-cols-3 gap-2">
                       <div className="space-y-1">
                         <Label className="text-sm">Data</Label>
                         <Input
@@ -306,10 +307,17 @@ export const RaceForm = ({ race, onSubmit, onCancel }: RaceFormProps) => {
                         />
                       </div>
                       <div className="space-y-1">
-                        <Label className="text-sm">Horário</Label>
+                        <Label className="text-sm">Horário de Início</Label>
                         <Input
                           type="time"
-                          {...register(`kitPickupDates.${index}.time` as const)}
+                          {...register(`kitPickupDates.${index}.startTime` as const)}
+                        />
+                      </div>
+                      <div className="space-y-1">
+                        <Label className="text-sm">Horário de Fim</Label>
+                        <Input
+                          type="time"
+                          {...register(`kitPickupDates.${index}.endTime` as const)}
                         />
                       </div>
                     </div>
@@ -331,7 +339,7 @@ export const RaceForm = ({ race, onSubmit, onCancel }: RaceFormProps) => {
                   type="button"
                   variant="outline"
                   size="sm"
-                  onClick={() => append({ date: "", time: "" })}
+                  onClick={() => append({ date: "", startTime: "", endTime: "" })}
                   className="w-full"
                 >
                   <Plus className="w-4 h-4 mr-2" />
