@@ -18,6 +18,13 @@ export interface Race {
     name?: string;
   };
   observations?: string;
+  // Novos campos para corridas realizadas
+  raceResults?: {
+    completionTime: string; // formato HH:MM:SS
+    overallPlacement?: number;
+    ageGroupPlacement?: number;
+    shoesUsed?: string;
+  };
   createdAt: Date;
   updatedAt: Date;
 }
@@ -37,6 +44,11 @@ export interface RaceFormData {
   registrationProofUrl?: string;
   registrationProofType?: 'file' | 'link';
   observations?: string;
+  // Novos campos para resultados
+  completionTime?: string;
+  overallPlacement?: number;
+  ageGroupPlacement?: number;
+  shoesUsed?: string;
 }
 
 export interface RaceStats {

@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from 'react';
 import { Race, RaceFormData, RaceStats } from '@/types/race';
 
@@ -66,6 +65,12 @@ export const useRaces = () => {
         url: raceData.registrationProofUrl,
       } : undefined,
       observations: raceData.observations,
+      raceResults: raceData.status === 'completed' && raceData.completionTime ? {
+        completionTime: raceData.completionTime,
+        overallPlacement: raceData.overallPlacement,
+        ageGroupPlacement: raceData.ageGroupPlacement,
+        shoesUsed: raceData.shoesUsed,
+      } : undefined,
       createdAt: new Date(),
       updatedAt: new Date(),
     };
@@ -99,6 +104,12 @@ export const useRaces = () => {
         url: raceData.registrationProofUrl,
       } : undefined,
       observations: raceData.observations,
+      raceResults: raceData.status === 'completed' && raceData.completionTime ? {
+        completionTime: raceData.completionTime,
+        overallPlacement: raceData.overallPlacement,
+        ageGroupPlacement: raceData.ageGroupPlacement,
+        shoesUsed: raceData.shoesUsed,
+      } : undefined,
       updatedAt: new Date(),
     };
 

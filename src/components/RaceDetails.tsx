@@ -1,8 +1,9 @@
+
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";
-import { Calendar, Clock, MapPin, FileText, ExternalLink, Edit, X, Route } from "lucide-react";
+import { Calendar, Clock, MapPin, FileText, ExternalLink, Edit, X, Route, Trophy, Timer, Award, Footprints } from "lucide-react";
 import { Race } from "@/types/race";
 import { format } from "date-fns";
 import { ptBR } from "date-fns/locale";
@@ -23,12 +24,15 @@ export const RaceDetails = ({ race, onEdit, onClose }: RaceDetailsProps) => {
             <div className="flex items-center gap-2 mt-2">
               <Badge 
                 variant="outline" 
-                className={race.status === "upcoming" 
-                  ? "bg-blue-50 text-blue-700 border-blue-200" 
-                  : "bg-green-50 text-green-700 border-green-200"
+                className={
+                  race.status === "upcoming" 
+                    ? "bg-blue-50 text-blue-700 border-blue-200" 
+                    : race.status === "completed"
+                    ? "bg-green-50 text-green-700 border-green-200"
+                    : "bg-yellow-50 text-yellow-700 border-yellow-200"
                 }
               >
-                {race.status === "upcoming" ? "A Fazer" : "Realizada"}
+                {race.status === "upcoming" ? "A Fazer" : race.status === "completed" ? "Realizada" : "Interesse"}
               </Badge>
               <Badge variant="secondary" className="bg-purple-50 text-purple-700 border-purple-200">
                 <Route className="w-3 h-3 mr-1" />
@@ -71,6 +75,62 @@ export const RaceDetails = ({ race, onEdit, onClose }: RaceDetailsProps) => {
             </div>
           </div>
         </div>
+
+        {/* Resultados da Corrida - só aparece se status for "completed" e tiver resultados */}
+        {race.status === 'completed' && race.raceResults && (
+          <>
+            <Separator />
+            <div className="space-y-3">
+              <h3 className="font-semibold text-lg flex items-center gap-2">
+                <Trophy className="w-5 h-5 text-yellow-600" />
+                Resultados da Corrida
+              </h3>
+              <div className="bg-yellow-50 p-4 rounded-lg space-y-3">
+                {race.raceResults.completionTime && (
+                  <div className="flex items-center gap-3">
+                    <Timer className="w-5 h-5 text-yellow-600" />
+                    <div>
+                      <p className="font-medium text-yellow-900">Tempo de Conclusão</p>
+                      <p className="text-yellow-700 text-lg font-mono">{race.raceResults.completionTime}</p>
+                    </div>
+                  </div>
+                )}
+                
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  {race.raceResults.overallPlacement && (
+                    <div className="flex items-center gap-3">
+                      <Award className="w-5 h-5 text-yellow-600" />
+                      <div>
+                        <p className="font-medium text-yellow-900">Colocação Geral</p>
+                        <p className="text-yellow-700">{race.raceResults.overallPlacement}º lugar</p>
+                      </div>
+                    </div>
+                  )}
+                  
+                  {race.raceResults.ageGroupPlacement && (
+                    <div className="flex items-center gap-3">
+                      <Award className="w-5 h-5 text-yellow-600" />
+                      <div>
+                        <p className="font-medium text-yellow-900">Colocação por Faixa Etária</p>
+                        <p className="text-yellow-700">{race.raceResults.ageGroupPlacement}º lugar</p>
+                      </div>
+                    </div>
+                  )}
+                </div>
+                
+                {race.raceResults.shoesUsed && (
+                  <div className="flex items-center gap-3">
+                    <Footprints className="w-5 h-5 text-yellow-600" />
+                    <div>
+                      <p className="font-medium text-yellow-900">Tênis Usado</p>
+                      <p className="text-yellow-700">{race.raceResults.shoesUsed}</p>
+                    </div>
+                  </div>
+                )}
+              </div>
+            </div>
+          </>
+        )}
 
         <Separator />
 
@@ -139,7 +199,6 @@ export const RaceDetails = ({ race, onEdit, onClose }: RaceDetailsProps) => {
           </>
         )}
 
-        {/* Observações */}
         {race.observations && (
           <>
             <Separator />
@@ -152,7 +211,6 @@ export const RaceDetails = ({ race, onEdit, onClose }: RaceDetailsProps) => {
           </>
         )}
 
-        {/* Informações de Sistema */}
         <Separator />
         <div className="text-sm text-muted-foreground space-y-1">
           <p>Criado em: {format(race.createdAt, "dd/MM/yyyy 'às' HH:mm")}</p>

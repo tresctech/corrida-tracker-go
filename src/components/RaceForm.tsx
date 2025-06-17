@@ -1,4 +1,3 @@
-
 import React, { useEffect } from 'react';
 import { useForm, useFieldArray } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
@@ -10,7 +9,7 @@ import { Textarea } from '@/components/ui/textarea';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
-import { Calendar, Clock, MapPin, Plus, Trash2, FileText, Link as LinkIcon } from 'lucide-react';
+import { Calendar, Clock, MapPin, Plus, Trash2, FileText, Link as LinkIcon, Trophy, Timer, Footprints } from 'lucide-react';
 import { Race, RaceFormData } from '@/types/race';
 import { format } from 'date-fns';
 
@@ -34,6 +33,11 @@ const raceFormSchema = z.object({
   registrationProofUrl: z.string().optional(),
   registrationProofType: z.enum(['file', 'link']).optional(),
   observations: z.string().optional(),
+  // Novos campos para resultados
+  completionTime: z.string().optional(),
+  overallPlacement: z.number().optional(),
+  ageGroupPlacement: z.number().optional(),
+  shoesUsed: z.string().optional(),
 });
 
 interface RaceFormProps {
@@ -56,6 +60,10 @@ export const RaceForm = ({ race, onSubmit, onCancel }: RaceFormProps) => {
       registrationProofUrl: '',
       registrationProofType: 'link',
       observations: '',
+      completionTime: '',
+      overallPlacement: undefined,
+      ageGroupPlacement: undefined,
+      shoesUsed: '',
     },
   });
 
@@ -84,6 +92,10 @@ export const RaceForm = ({ race, onSubmit, onCancel }: RaceFormProps) => {
         registrationProofUrl: race.registrationProof?.url,
         registrationProofType: race.registrationProof?.type,
         observations: race.observations,
+        completionTime: race.raceResults?.completionTime,
+        overallPlacement: race.raceResults?.overallPlacement,
+        ageGroupPlacement: race.raceResults?.ageGroupPlacement,
+        shoesUsed: race.raceResults?.shoesUsed,
       };
       form.reset(formData);
     }
@@ -114,6 +126,8 @@ export const RaceForm = ({ race, onSubmit, onCancel }: RaceFormProps) => {
 
   const kitPickupDatesValue = form.watch('kitPickupDates');
   const isKitPickupDefined = kitPickupDatesValue !== 'to-be-defined';
+  const currentStatus = form.watch('status');
+  const isCompleted = currentStatus === 'completed';
 
   return (
     <Card>
@@ -257,6 +271,70 @@ export const RaceForm = ({ race, onSubmit, onCancel }: RaceFormProps) => {
               </div>
             )}
           </div>
+
+          {/* Seção de Resultados da Corrida - só aparece se status for "completed" */}
+          {isCompleted && (
+            <div className="border-t pt-4 mt-6">
+              <h3 className="text-lg font-semibold mb-4 flex items-center gap-2">
+                <Trophy className="w-5 h-5 text-yellow-600" />
+                Resultados da Corrida
+              </h3>
+              
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div>
+                  <Label htmlFor="completionTime">Tempo de Conclusão</Label>
+                  <Input 
+                    id="completionTime" 
+                    type="text" 
+                    placeholder="HH:MM:SS (ex: 01:30:45)"
+                    {...form.register('completionTime')} 
+                  />
+                  {form.formState.errors.completionTime && (
+                    <p className="text-red-500 text-sm">{form.formState.errors.completionTime.message}</p>
+                  )}
+                </div>
+
+                <div>
+                  <Label htmlFor="overallPlacement">Colocação Geral</Label>
+                  <Input 
+                    id="overallPlacement" 
+                    type="number" 
+                    placeholder="Ex: 150"
+                    {...form.register('overallPlacement', { valueAsNumber: true })} 
+                  />
+                  {form.formState.errors.overallPlacement && (
+                    <p className="text-red-500 text-sm">{form.formState.errors.overallPlacement.message}</p>
+                  )}
+                </div>
+
+                <div>
+                  <Label htmlFor="ageGroupPlacement">Colocação por Faixa Etária</Label>
+                  <Input 
+                    id="ageGroupPlacement" 
+                    type="number" 
+                    placeholder="Ex: 15"
+                    {...form.register('ageGroupPlacement', { valueAsNumber: true })} 
+                  />
+                  {form.formState.errors.ageGroupPlacement && (
+                    <p className="text-red-500 text-sm">{form.formState.errors.ageGroupPlacement.message}</p>
+                  )}
+                </div>
+
+                <div>
+                  <Label htmlFor="shoesUsed">Tênis Usado</Label>
+                  <Input 
+                    id="shoesUsed" 
+                    type="text" 
+                    placeholder="Ex: Nike Air Zoom Pegasus 39"
+                    {...form.register('shoesUsed')} 
+                  />
+                  {form.formState.errors.shoesUsed && (
+                    <p className="text-red-500 text-sm">{form.formState.errors.shoesUsed.message}</p>
+                  )}
+                </div>
+              </div>
+            </div>
+          )}
 
           <div>
             <Label>Comprovante de Inscrição</Label>
