@@ -1,3 +1,4 @@
+
 import React, { useEffect } from 'react';
 import { useForm, useFieldArray } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
@@ -60,23 +61,31 @@ export const RaceForm = ({ race, onSubmit, onCancel }: RaceFormProps) => {
 
   const { fields, append, remove } = useFieldArray({
     control: form.control,
-    name: 'kitPickupDates' as const,
+    name: 'kitPickupDates',
+    keyName: 'fieldId',
   });
 
   useEffect(() => {
     if (race) {
-      form.reset({
+      const formData: RaceFormData = {
         name: race.name,
         status: race.status,
         raceDate: format(race.raceDate, 'yyyy-MM-dd'),
         startTime: race.startTime,
         distance: race.distance,
         kitPickupAddress: race.kitPickupAddress,
-        kitPickupDates: race.kitPickupDates === 'to-be-defined' ? 'to-be-defined' : race.kitPickupDates,
+        kitPickupDates: race.kitPickupDates === 'to-be-defined' 
+          ? 'to-be-defined' 
+          : race.kitPickupDates.map(pickup => ({
+              date: format(pickup.date, 'yyyy-MM-dd'),
+              startTime: pickup.startTime,
+              endTime: pickup.endTime,
+            })),
         registrationProofUrl: race.registrationProof?.url,
         registrationProofType: race.registrationProof?.type,
         observations: race.observations,
-      });
+      };
+      form.reset(formData);
     }
   }, [race, form]);
 
@@ -91,10 +100,7 @@ export const RaceForm = ({ race, onSubmit, onCancel }: RaceFormProps) => {
     if (type === 'to-be-defined') {
       form.setValue('kitPickupDates', 'to-be-defined');
     } else {
-      const currentValue = form.getValues('kitPickupDates');
-      if (currentValue === 'to-be-defined' || !Array.isArray(currentValue)) {
-        form.setValue('kitPickupDates', []);
-      }
+      form.setValue('kitPickupDates', []);
     }
   };
 
@@ -105,6 +111,9 @@ export const RaceForm = ({ race, onSubmit, onCancel }: RaceFormProps) => {
     }
     append({ date: '', startTime: '', endTime: '' });
   };
+
+  const kitPickupDatesValue = form.watch('kitPickupDates');
+  const isKitPickupDefined = kitPickupDatesValue !== 'to-be-defined';
 
   return (
     <Card>
@@ -123,7 +132,10 @@ export const RaceForm = ({ race, onSubmit, onCancel }: RaceFormProps) => {
 
           <div>
             <Label htmlFor="status">Status</Label>
-            <Select onValueChange={(value) => form.setValue('status', value as 'upcoming' | 'completed' | 'interest')}>
+            <Select 
+              value={form.watch('status')} 
+              onValueChange={(value) => form.setValue('status', value as 'upcoming' | 'completed' | 'interest')}
+            >
               <SelectTrigger>
                 <SelectValue placeholder="Selecione o status" />
               </SelectTrigger>
@@ -156,7 +168,12 @@ export const RaceForm = ({ race, onSubmit, onCancel }: RaceFormProps) => {
 
           <div>
             <Label htmlFor="distance">Distância (km)</Label>
-            <Input id="distance" type="number" step="0.1" {...form.register('distance')} />
+            <Input 
+              id="distance" 
+              type="number" 
+              step="0.1" 
+              {...form.register('distance', { valueAsNumber: true })} 
+            />
             {form.formState.errors.distance && (
               <p className="text-red-500 text-sm">{form.formState.errors.distance.message}</p>
             )}
@@ -185,10 +202,10 @@ export const RaceForm = ({ race, onSubmit, onCancel }: RaceFormProps) => {
               <p className="text-red-500 text-sm">{form.formState.errors.kitPickupDates.message}</p>
             )}
 
-            {form.getValues('kitPickupDates') !== 'to-be-defined' && (
+            {isKitPickupDefined && Array.isArray(kitPickupDatesValue) && (
               <div className="mt-2">
                 {fields.map((field, index) => (
-                  <div key={field.id} className="flex items-center space-x-2 mb-2">
+                  <div key={field.fieldId} className="flex items-center space-x-2 mb-2">
                     <div>
                       <Label htmlFor={`kitPickupDates.${index}.date`}>Data</Label>
                       <Input
@@ -245,6 +262,7 @@ export const RaceForm = ({ race, onSubmit, onCancel }: RaceFormProps) => {
             <Label>Comprovante de Inscrição</Label>
             <div className="flex items-center space-x-4 mt-2">
               <Button
+                type="button"
                 variant="outline"
                 onClick={() => form.setValue('registrationProofType', 'file')}
                 className={form.watch('registrationProofType') === 'file' ? 'bg-accent text-accent-foreground' : ''}
@@ -253,6 +271,7 @@ export const RaceForm = ({ race, onSubmit, onCancel }: RaceFormProps) => {
                 Arquivo
               </Button>
               <Button
+                type="button"
                 variant="outline"
                 onClick={() => form.setValue('registrationProofType', 'link')}
                 className={form.watch('registrationProofType') === 'link' ? 'bg-accent text-accent-foreground' : ''}
