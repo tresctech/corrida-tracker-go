@@ -91,9 +91,16 @@ export const RaceList = ({ races, onEditRace, onDeleteRace, onViewDetails }: Rac
             <div>
               <p className="font-medium text-gray-900">Retirada do Kit</p>
               <p className="text-sm text-gray-600">{race.kitPickupAddress}</p>
-              <p className="text-sm text-gray-500">
-                {format(race.kitPickupDate, "dd/MM/yyyy")} às {race.kitPickupTime}
-              </p>
+              {race.kitPickupDates === 'to-be-defined' ? (
+                <p className="text-sm text-gray-500">A definir</p>
+              ) : (
+                race.kitPickupDates.length > 0 && (
+                  <p className="text-sm text-gray-500">
+                    {format(race.kitPickupDates[0].date, "dd/MM/yyyy")} às {race.kitPickupDates[0].time}
+                    {race.kitPickupDates.length > 1 && ` (+${race.kitPickupDates.length - 1} mais)`}
+                  </p>
+                )
+              )}
             </div>
           </div>
         </div>

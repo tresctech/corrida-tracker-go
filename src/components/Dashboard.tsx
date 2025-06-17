@@ -109,9 +109,16 @@ export const Dashboard = ({ stats, onAddRace }: DashboardProps) => {
                 <div>
                   <p className="font-medium text-blue-900">Retirada do Kit</p>
                   <p className="text-sm text-blue-700">{stats.nextRace.kitPickupAddress}</p>
-                  <p className="text-sm text-blue-600">
-                    {format(stats.nextRace.kitPickupDate, "dd/MM/yyyy")} às {stats.nextRace.kitPickupTime}
-                  </p>
+                  {stats.nextRace.kitPickupDates === 'to-be-defined' ? (
+                    <p className="text-sm text-blue-600">A definir</p>
+                  ) : (
+                    stats.nextRace.kitPickupDates.length > 0 && (
+                      <p className="text-sm text-blue-600">
+                        {format(stats.nextRace.kitPickupDates[0].date, "dd/MM/yyyy")} às {stats.nextRace.kitPickupDates[0].time}
+                        {stats.nextRace.kitPickupDates.length > 1 && ` (+${stats.nextRace.kitPickupDates.length - 1} mais)`}
+                      </p>
+                    )
+                  )}
                 </div>
               </div>
             </div>

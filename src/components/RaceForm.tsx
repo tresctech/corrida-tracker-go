@@ -94,6 +94,7 @@ export const RaceForm = ({ race, onSubmit, onCancel }: RaceFormProps) => {
   const { fields, append, remove } = useFieldArray({
     control,
     name: "kitPickupDates",
+    shouldUnregister: false,
   });
 
   const status = watch("status");
@@ -287,7 +288,7 @@ export const RaceForm = ({ race, onSubmit, onCancel }: RaceFormProps) => {
               </div>
             </div>
 
-            {!isToBeDefinedKit && (
+            {!isToBeDefinedKit && Array.isArray(fields) && (
               <div className="space-y-3">
                 {fields.map((field, index) => (
                   <div key={field.id} className="flex gap-2 items-end">
