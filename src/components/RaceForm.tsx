@@ -1,39 +1,36 @@
-import React, { useEffect } from 'react';
-import { useForm, useFieldArray } from 'react-hook-form';
-import { zodResolver } from '@hookform/resolvers/zod';
-import * as z from 'zod';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
-import { Textarea } from '@/components/ui/textarea';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Badge } from '@/components/ui/badge';
-import { Calendar, Clock, MapPin, Plus, Trash2, FileText, Link as LinkIcon, Trophy, Timer, Footprints } from 'lucide-react';
-import { Race, RaceFormData } from '@/types/race';
-import { format } from 'date-fns';
-
-const kitPickupDateSchema = z.object({
-  date: z.string().min(1, 'Data é obrigatória'),
-  startTime: z.string().min(1, 'Horário de início é obrigatório'),
-  endTime: z.string().min(1, 'Horário de fim é obrigatório'),
-});
+import { useState } from "react";
+import { useForm, useFieldArray } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { z } from "zod";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Textarea } from "@/components/ui/textarea";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Checkbox } from "@/components/ui/checkbox";
+import { Plus, Trash2 } from "lucide-react";
+import { Race, RaceFormData } from "@/types/race";
+import { format } from "date-fns";
 
 const raceFormSchema = z.object({
-  name: z.string().min(1, 'Nome da corrida é obrigatório'),
-  status: z.enum(['upcoming', 'completed', 'interest']),
-  raceDate: z.string().min(1, 'Data da corrida é obrigatória'),
-  startTime: z.string().min(1, 'Horário de início é obrigatório'),
-  distance: z.number().min(0.1, 'Distância deve ser maior que 0'),
-  kitPickupAddress: z.string().min(1, 'Endereço de retirada do kit é obrigatório'),
+  name: z.string().min(1, "Nome é obrigatório"),
+  status: z.enum(["upcoming", "completed", "interest"]),
+  raceDate: z.string().min(1, "Data é obrigatória"),
+  startTime: z.string().min(1, "Horário é obrigatório"),
+  distance: z.number().min(0.1, "Distância deve ser maior que 0"),
+  kitPickupAddress: z.string().min(1, "Endereço é obrigatório"),
   kitPickupDates: z.union([
-    z.literal('to-be-defined'),
-    z.array(kitPickupDateSchema).min(1, 'Pelo menos uma data de retirada é necessária')
+    z.literal("to-be-defined"),
+    z.array(z.object({
+      date: z.string().min(1, "Data é obrigatória"),
+      startTime: z.string().min(1, "Horário inicial é obrigatório"),
+      endTime: z.string().min(1, "Horário final é obrigatório"),
+    }))
   ]),
   registrationProofUrl: z.string().optional(),
-  registrationProofType: z.enum(['file', 'link']).optional(),
+  registrationProofType: z.enum(["file", "link"]).optional(),
   observations: z.string().optional(),
-  // Novos campos para resultados
   completionTime: z.string().optional(),
   overallPlacement: z.number().optional(),
   ageGroupPlacement: z.number().optional(),
@@ -47,354 +44,353 @@ interface RaceFormProps {
 }
 
 export const RaceForm = ({ race, onSubmit, onCancel }: RaceFormProps) => {
+  const [toBeDefinedKitPickup, setToBeDefinedKitPickup] = useState(
+    race?.kitPickupDates === "to-be-defined"
+  );
+
   const form = useForm<RaceFormData>({
     resolver: zodResolver(raceFormSchema),
     defaultValues: {
-      name: '',
-      status: 'upcoming',
-      raceDate: '',
-      startTime: '',
-      distance: 0,
-      kitPickupAddress: '',
-      kitPickupDates: [],
-      registrationProofUrl: '',
-      registrationProofType: 'link',
-      observations: '',
-      completionTime: '',
-      overallPlacement: undefined,
-      ageGroupPlacement: undefined,
-      shoesUsed: '',
+      name: race?.name || "",
+      status: race?.status || "upcoming",
+      raceDate: race ? format(race.raceDate, "yyyy-MM-dd") : "",
+      startTime: race?.startTime || "",
+      distance: race?.distance || 0,
+      kitPickupAddress: race?.kitPickupAddress || "",
+      kitPickupDates: race?.kitPickupDates === "to-be-defined" 
+        ? "to-be-defined" 
+        : Array.isArray(race?.kitPickupDates) 
+          ? race.kitPickupDates.map(date => ({
+              date: format(date.date, "yyyy-MM-dd"),
+              startTime: date.startTime,
+              endTime: date.endTime,
+            }))
+          : [],
+      registrationProofUrl: race?.registrationProof?.url || "",
+      registrationProofType: race?.registrationProof?.type || "link",
+      observations: race?.observations || "",
+      completionTime: race?.raceResults?.completionTime || "",
+      overallPlacement: race?.raceResults?.overallPlacement || undefined,
+      ageGroupPlacement: race?.raceResults?.ageGroupPlacement || undefined,
+      shoesUsed: race?.raceResults?.shoesUsed || "",
     },
   });
 
   const { fields, append, remove } = useFieldArray({
     control: form.control,
-    name: 'kitPickupDates',
-    keyName: 'fieldId',
+    name: "kitPickupDates" as "kitPickupDates",
   });
 
-  useEffect(() => {
-    if (race) {
-      const formData: RaceFormData = {
-        name: race.name,
-        status: race.status,
-        raceDate: format(race.raceDate, 'yyyy-MM-dd'),
-        startTime: race.startTime,
-        distance: race.distance,
-        kitPickupAddress: race.kitPickupAddress,
-        kitPickupDates: race.kitPickupDates === 'to-be-defined' 
-          ? 'to-be-defined' 
-          : race.kitPickupDates.map(pickup => ({
-              date: format(pickup.date, 'yyyy-MM-dd'),
-              startTime: pickup.startTime,
-              endTime: pickup.endTime,
-            })),
-        registrationProofUrl: race.registrationProof?.url,
-        registrationProofType: race.registrationProof?.type,
-        observations: race.observations,
-        completionTime: race.raceResults?.completionTime,
-        overallPlacement: race.raceResults?.overallPlacement,
-        ageGroupPlacement: race.raceResults?.ageGroupPlacement,
-        shoesUsed: race.raceResults?.shoesUsed,
-      };
-      form.reset(formData);
-    }
-  }, [race, form]);
+  const watchStatus = form.watch("status");
 
-  const handleSubmit = form.handleSubmit((data) => {
-    onSubmit({
+  const handleSubmit = (data: RaceFormData) => {
+    const processedData = {
       ...data,
-      distance: parseFloat(data.distance.toString()),
-    });
-  });
+      distance: Number(data.distance),
+      overallPlacement: data.overallPlacement ? Number(data.overallPlacement) : undefined,
+      ageGroupPlacement: data.ageGroupPlacement ? Number(data.ageGroupPlacement) : undefined,
+    };
+    onSubmit(processedData);
+  };
 
-  const handleKitPickupTypeChange = (type: string) => {
-    if (type === 'to-be-defined') {
-      form.setValue('kitPickupDates', 'to-be-defined');
+  const handleKitPickupToggle = (checked: boolean) => {
+    setToBeDefinedKitPickup(checked);
+    if (checked) {
+      form.setValue("kitPickupDates", "to-be-defined");
     } else {
-      form.setValue('kitPickupDates', []);
+      form.setValue("kitPickupDates", []);
     }
   };
 
   const addKitPickupDate = () => {
-    const currentValue = form.getValues('kitPickupDates');
-    if (currentValue === 'to-be-defined') {
-      form.setValue('kitPickupDates', []);
+    if (!toBeDefinedKitPickup && Array.isArray(form.getValues("kitPickupDates"))) {
+      append({
+        date: "",
+        startTime: "",
+        endTime: "",
+      });
     }
-    append({ date: '', startTime: '', endTime: '' });
   };
 
-  const kitPickupDatesValue = form.watch('kitPickupDates');
-  const isKitPickupDefined = kitPickupDatesValue !== 'to-be-defined';
-  const currentStatus = form.watch('status');
-  const isCompleted = currentStatus === 'completed';
+  const removeKitPickupDate = (index: number) => {
+    remove(index);
+  };
 
   return (
-    <Card>
-      <CardHeader>
-        <CardTitle>{race ? 'Editar Corrida' : 'Adicionar Corrida'}</CardTitle>
-      </CardHeader>
-      <CardContent>
-        <form onSubmit={handleSubmit} className="space-y-4">
-          <div>
-            <Label htmlFor="name">Nome da Corrida</Label>
-            <Input id="name" type="text" {...form.register('name')} />
-            {form.formState.errors.name && (
-              <p className="text-red-500 text-sm">{form.formState.errors.name.message}</p>
-            )}
-          </div>
-
-          <div>
-            <Label htmlFor="status">Status</Label>
-            <Select 
-              value={form.watch('status')} 
-              onValueChange={(value) => form.setValue('status', value as 'upcoming' | 'completed' | 'interest')}
-            >
-              <SelectTrigger>
-                <SelectValue placeholder="Selecione o status" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="upcoming">A Fazer</SelectItem>
-                <SelectItem value="completed">Realizada</SelectItem>
-                <SelectItem value="interest">Interesse</SelectItem>
-              </SelectContent>
-            </Select>
-            {form.formState.errors.status && (
-              <p className="text-red-500 text-sm">{form.formState.errors.status.message}</p>
-            )}
-          </div>
-
-          <div>
-            <Label htmlFor="raceDate">Data da Corrida</Label>
-            <Input id="raceDate" type="date" {...form.register('raceDate')} />
-            {form.formState.errors.raceDate && (
-              <p className="text-red-500 text-sm">{form.formState.errors.raceDate.message}</p>
-            )}
-          </div>
-
-          <div>
-            <Label htmlFor="startTime">Horário de Início</Label>
-            <Input id="startTime" type="time" {...form.register('startTime')} />
-            {form.formState.errors.startTime && (
-              <p className="text-red-500 text-sm">{form.formState.errors.startTime.message}</p>
-            )}
-          </div>
-
-          <div>
-            <Label htmlFor="distance">Distância (km)</Label>
-            <Input 
-              id="distance" 
-              type="number" 
-              step="0.1" 
-              {...form.register('distance', { valueAsNumber: true })} 
-            />
-            {form.formState.errors.distance && (
-              <p className="text-red-500 text-sm">{form.formState.errors.distance.message}</p>
-            )}
-          </div>
-
-          <div>
-            <Label htmlFor="kitPickupAddress">Endereço de Retirada do Kit</Label>
-            <Input id="kitPickupAddress" type="text" {...form.register('kitPickupAddress')} />
-            {form.formState.errors.kitPickupAddress && (
-              <p className="text-red-500 text-sm">{form.formState.errors.kitPickupAddress.message}</p>
-            )}
-          </div>
-
-          <div>
-            <Label>Datas de Retirada do Kit</Label>
-            <Select onValueChange={(value) => handleKitPickupTypeChange(value)}>
-              <SelectTrigger>
-                <SelectValue placeholder="Selecione o tipo" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="defined">Definido</SelectItem>
-                <SelectItem value="to-be-defined">A definir</SelectItem>
-              </SelectContent>
-            </Select>
-            {form.formState.errors.kitPickupDates && (
-              <p className="text-red-500 text-sm">{form.formState.errors.kitPickupDates.message}</p>
-            )}
-
-            {isKitPickupDefined && Array.isArray(kitPickupDatesValue) && (
-              <div className="mt-2">
-                {fields.map((field, index) => (
-                  <div key={field.fieldId} className="flex items-center space-x-2 mb-2">
-                    <div>
-                      <Label htmlFor={`kitPickupDates.${index}.date`}>Data</Label>
-                      <Input
-                        id={`kitPickupDates.${index}.date`}
-                        type="date"
-                        {...form.register(`kitPickupDates.${index}.date`)}
-                      />
-                      {form.formState.errors.kitPickupDates?.[index]?.date && (
-                        <p className="text-red-500 text-sm">
-                          {form.formState.errors.kitPickupDates[index]?.date?.message}
-                        </p>
-                      )}
-                    </div>
-                    <div>
-                      <Label htmlFor={`kitPickupDates.${index}.startTime`}>Início</Label>
-                      <Input
-                        id={`kitPickupDates.${index}.startTime`}
-                        type="time"
-                        {...form.register(`kitPickupDates.${index}.startTime`)}
-                      />
-                      {form.formState.errors.kitPickupDates?.[index]?.startTime && (
-                        <p className="text-red-500 text-sm">
-                          {form.formState.errors.kitPickupDates[index]?.startTime?.message}
-                        </p>
-                      )}
-                    </div>
-                    <div>
-                      <Label htmlFor={`kitPickupDates.${index}.endTime`}>Fim</Label>
-                      <Input
-                        id={`kitPickupDates.${index}.endTime`}
-                        type="time"
-                        {...form.register(`kitPickupDates.${index}.endTime`)}
-                      />
-                      {form.formState.errors.kitPickupDates?.[index]?.endTime && (
-                        <p className="text-red-500 text-sm">
-                          {form.formState.errors.kitPickupDates[index]?.endTime?.message}
-                        </p>
-                      )}
-                    </div>
-                    <Button type="button" variant="ghost" size="icon" onClick={() => remove(index)}>
-                      <Trash2 className="h-4 w-4" />
-                    </Button>
-                  </div>
-                ))}
-                <Button type="button" variant="secondary" onClick={addKitPickupDate} className="mt-2">
-                  <Plus className="w-4 h-4 mr-2" />
-                  Adicionar Data
-                </Button>
-              </div>
-            )}
-          </div>
-
-          {/* Seção de Resultados da Corrida - só aparece se status for "completed" */}
-          {isCompleted && (
-            <div className="border-t pt-4 mt-6">
-              <h3 className="text-lg font-semibold mb-4 flex items-center gap-2">
-                <Trophy className="w-5 h-5 text-yellow-600" />
-                Resultados da Corrida
-              </h3>
-              
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <div>
-                  <Label htmlFor="completionTime">Tempo de Conclusão</Label>
-                  <Input 
-                    id="completionTime" 
-                    type="text" 
-                    placeholder="HH:MM:SS (ex: 01:30:45)"
-                    {...form.register('completionTime')} 
-                  />
-                  {form.formState.errors.completionTime && (
-                    <p className="text-red-500 text-sm">{form.formState.errors.completionTime.message}</p>
-                  )}
-                </div>
-
-                <div>
-                  <Label htmlFor="overallPlacement">Colocação Geral</Label>
-                  <Input 
-                    id="overallPlacement" 
-                    type="number" 
-                    placeholder="Ex: 150"
-                    {...form.register('overallPlacement', { valueAsNumber: true })} 
-                  />
-                  {form.formState.errors.overallPlacement && (
-                    <p className="text-red-500 text-sm">{form.formState.errors.overallPlacement.message}</p>
-                  )}
-                </div>
-
-                <div>
-                  <Label htmlFor="ageGroupPlacement">Colocação por Faixa Etária</Label>
-                  <Input 
-                    id="ageGroupPlacement" 
-                    type="number" 
-                    placeholder="Ex: 15"
-                    {...form.register('ageGroupPlacement', { valueAsNumber: true })} 
-                  />
-                  {form.formState.errors.ageGroupPlacement && (
-                    <p className="text-red-500 text-sm">{form.formState.errors.ageGroupPlacement.message}</p>
-                  )}
-                </div>
-
-                <div>
-                  <Label htmlFor="shoesUsed">Tênis Usado</Label>
-                  <Input 
-                    id="shoesUsed" 
-                    type="text" 
-                    placeholder="Ex: Nike Air Zoom Pegasus 39"
-                    {...form.register('shoesUsed')} 
-                  />
-                  {form.formState.errors.shoesUsed && (
-                    <p className="text-red-500 text-sm">{form.formState.errors.shoesUsed.message}</p>
-                  )}
-                </div>
-              </div>
-            </div>
-          )}
-
-          <div>
-            <Label>Comprovante de Inscrição</Label>
-            <div className="flex items-center space-x-4 mt-2">
-              <Button
-                type="button"
-                variant="outline"
-                onClick={() => form.setValue('registrationProofType', 'file')}
-                className={form.watch('registrationProofType') === 'file' ? 'bg-accent text-accent-foreground' : ''}
-              >
-                <FileText className="w-4 h-4 mr-2" />
-                Arquivo
-              </Button>
-              <Button
-                type="button"
-                variant="outline"
-                onClick={() => form.setValue('registrationProofType', 'link')}
-                className={form.watch('registrationProofType') === 'link' ? 'bg-accent text-accent-foreground' : ''}
-              >
-                <LinkIcon className="w-4 h-4 mr-2" />
-                Link
-              </Button>
-            </div>
-
-            {form.watch('registrationProofType') === 'file' && (
-              <div className="mt-2">
-                <Label htmlFor="registrationProofFile">Arquivo</Label>
-                <Input id="registrationProofFile" type="file" />
-              </div>
-            )}
-
-            {form.watch('registrationProofType') === 'link' && (
-              <div className="mt-2">
-                <Label htmlFor="registrationProofUrl">URL</Label>
-                <Input id="registrationProofUrl" type="url" {...form.register('registrationProofUrl')} />
-                {form.formState.errors.registrationProofUrl && (
-                  <p className="text-red-500 text-sm">{form.formState.errors.registrationProofUrl.message}</p>
+    <div className="max-w-4xl mx-auto">
+      <Card className="running-card">
+        <CardHeader>
+          <CardTitle>{race ? "Editar Corrida" : "Nova Corrida"}</CardTitle>
+        </CardHeader>
+        <CardContent>
+          <form onSubmit={form.handleSubmit(handleSubmit)} className="space-y-6">
+            
+            <div className="space-y-4">
+              <div>
+                <Label htmlFor="name">Nome da Corrida</Label>
+                <Input
+                  id="name"
+                  {...form.register("name")}
+                  placeholder="Ex: Corrida de São Silvestre"
+                />
+                {form.formState.errors.name && (
+                  <p className="text-sm text-red-500 mt-1">
+                    {form.formState.errors.name.message}
+                  </p>
                 )}
               </div>
-            )}
-          </div>
 
-          <div>
-            <Label htmlFor="observations">Observações</Label>
-            <Textarea id="observations" {...form.register('observations')} />
-            {form.formState.errors.observations && (
-              <p className="text-red-500 text-sm">{form.formState.errors.observations.message}</p>
-            )}
-          </div>
+              <div>
+                <Label htmlFor="status">Status</Label>
+                <Select
+                  value={form.watch("status")}
+                  onValueChange={(value: "upcoming" | "completed" | "interest") =>
+                    form.setValue("status", value)
+                  }
+                >
+                  <SelectTrigger>
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="upcoming">A Fazer</SelectItem>
+                    <SelectItem value="completed">Realizada</SelectItem>
+                    <SelectItem value="interest">Interesse</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
 
-          <div className="flex justify-end space-x-2">
-            <Button type="button" variant="secondary" onClick={onCancel}>
-              Cancelar
-            </Button>
-            <Button type="submit" className="running-gradient text-white hover:opacity-90 transition-opacity">
-              {race ? 'Salvar' : 'Adicionar'}
-            </Button>
-          </div>
-        </form>
-      </CardContent>
-    </Card>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div>
+                  <Label htmlFor="raceDate">Data da Corrida</Label>
+                  <Input
+                    id="raceDate"
+                    type="date"
+                    {...form.register("raceDate")}
+                  />
+                  {form.formState.errors.raceDate && (
+                    <p className="text-sm text-red-500 mt-1">
+                      {form.formState.errors.raceDate.message}
+                    </p>
+                  )}
+                </div>
+
+                <div>
+                  <Label htmlFor="startTime">Horário de Início</Label>
+                  <Input
+                    id="startTime"
+                    type="time"
+                    {...form.register("startTime")}
+                  />
+                  {form.formState.errors.startTime && (
+                    <p className="text-sm text-red-500 mt-1">
+                      {form.formState.errors.startTime.message}
+                    </p>
+                  )}
+                </div>
+              </div>
+
+              <div>
+                <Label htmlFor="distance">Distância (km)</Label>
+                <Input
+                  id="distance"
+                  type="number"
+                  step="0.1"
+                  {...form.register("distance", { valueAsNumber: true })}
+                  placeholder="Ex: 10"
+                />
+                {form.formState.errors.distance && (
+                  <p className="text-sm text-red-500 mt-1">
+                    {form.formState.errors.distance.message}
+                  </p>
+                )}
+              </div>
+
+              <div>
+                <Label htmlFor="kitPickupAddress">Endereço de Retirada do Kit</Label>
+                <Input
+                  id="kitPickupAddress"
+                  {...form.register("kitPickupAddress")}
+                  placeholder="Ex: Shopping Ibirapuera - Piso 2"
+                />
+                {form.formState.errors.kitPickupAddress && (
+                  <p className="text-sm text-red-500 mt-1">
+                    {form.formState.errors.kitPickupAddress.message}
+                  </p>
+                )}
+              </div>
+
+              <div className="space-y-4">
+                <div className="flex items-center space-x-2">
+                  <Checkbox
+                    id="toBeDefinedKitPickup"
+                    checked={toBeDefinedKitPickup}
+                    onCheckedChange={handleKitPickupToggle}
+                  />
+                  <Label htmlFor="toBeDefinedKitPickup">
+                    Datas de retirada do kit a definir
+                  </Label>
+                </div>
+
+                {!toBeDefinedKitPickup && (
+                  <div className="space-y-4">
+                    <div className="flex justify-between items-center">
+                      <Label>Datas de Retirada do Kit</Label>
+                      <Button
+                        type="button"
+                        variant="outline"
+                        size="sm"
+                        onClick={addKitPickupDate}
+                      >
+                        <Plus className="w-4 h-4 mr-2" />
+                        Adicionar Data
+                      </Button>
+                    </div>
+
+                    {Array.isArray(form.watch("kitPickupDates")) && 
+                     (form.watch("kitPickupDates") as Array<{date: string; startTime: string; endTime: string}>).map((_, index) => (
+                      <Card key={index} className="p-4">
+                        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                          <div>
+                            <Label htmlFor={`kitPickupDates.${index}.date`}>Data</Label>
+                            <Input
+                              type="date"
+                              {...form.register(`kitPickupDates.${index}.date` as const)}
+                            />
+                          </div>
+                          <div>
+                            <Label htmlFor={`kitPickupDates.${index}.startTime`}>Horário Início</Label>
+                            <Input
+                              type="time"
+                              {...form.register(`kitPickupDates.${index}.startTime` as const)}
+                            />
+                          </div>
+                          <div className="flex gap-2 items-end">
+                            <div className="flex-1">
+                              <Label htmlFor={`kitPickupDates.${index}.endTime`}>Horário Fim</Label>
+                              <Input
+                                type="time"
+                                {...form.register(`kitPickupDates.${index}.endTime` as const)}
+                              />
+                            </div>
+                            <Button
+                              type="button"
+                              variant="outline"
+                              size="sm"
+                              onClick={() => removeKitPickupDate(index)}
+                            >
+                              <Trash2 className="w-4 h-4" />
+                            </Button>
+                          </div>
+                        </div>
+                      </Card>
+                    ))}
+                  </div>
+                )}
+              </div>
+
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div>
+                  <Label htmlFor="registrationProofType">Tipo de Comprovante</Label>
+                  <Select
+                    value={form.watch("registrationProofType")}
+                    onValueChange={(value: "file" | "link") =>
+                      form.setValue("registrationProofType", value)
+                    }
+                  >
+                    <SelectTrigger>
+                      <SelectValue placeholder="Selecione o tipo" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="file">Arquivo</SelectItem>
+                      <SelectItem value="link">Link</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+
+                <div>
+                  <Label htmlFor="registrationProofUrl">
+                    {form.watch("registrationProofType") === "file" ? "URL do Arquivo" : "Link"}
+                  </Label>
+                  <Input
+                    id="registrationProofUrl"
+                    {...form.register("registrationProofUrl")}
+                    placeholder={
+                      form.watch("registrationProofType") === "file"
+                        ? "URL do comprovante"
+                        : "Link do comprovante"
+                    }
+                  />
+                </div>
+              </div>
+
+              {watchStatus === "completed" && (
+                <Card className="p-4 bg-green-50 border-green-200">
+                  <h3 className="font-semibold text-green-800 mb-4">Resultados da Corrida</h3>
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div>
+                      <Label htmlFor="completionTime">Tempo de Conclusão</Label>
+                      <Input
+                        id="completionTime"
+                        {...form.register("completionTime")}
+                        placeholder="Ex: 01:30:45"
+                        pattern="[0-9]{2}:[0-9]{2}:[0-9]{2}"
+                      />
+                    </div>
+
+                    <div>
+                      <Label htmlFor="overallPlacement">Colocação Geral</Label>
+                      <Input
+                        id="overallPlacement"
+                        type="number"
+                        {...form.register("overallPlacement", { valueAsNumber: true })}
+                        placeholder="Ex: 150"
+                      />
+                    </div>
+
+                    <div>
+                      <Label htmlFor="ageGroupPlacement">Colocação por Faixa Etária</Label>
+                      <Input
+                        id="ageGroupPlacement"
+                        type="number"
+                        {...form.register("ageGroupPlacement", { valueAsNumber: true })}
+                        placeholder="Ex: 15"
+                      />
+                    </div>
+
+                    <div>
+                      <Label htmlFor="shoesUsed">Tênis Usado</Label>
+                      <Input
+                        id="shoesUsed"
+                        {...form.register("shoesUsed")}
+                        placeholder="Ex: Nike Air Zoom Pegasus 40"
+                      />
+                    </div>
+                  </div>
+                </Card>
+              )}
+
+              <div>
+                <Label htmlFor="observations">Observações</Label>
+                <Textarea
+                  id="observations"
+                  {...form.register("observations")}
+                  placeholder="Observações adicionais sobre a corrida..."
+                  rows={3}
+                />
+              </div>
+            </div>
+
+            <div className="flex gap-4">
+              <Button type="submit" className="running-gradient text-white">
+                {race ? "Atualizar Corrida" : "Criar Corrida"}
+              </Button>
+              <Button type="button" variant="outline" onClick={onCancel}>
+                Cancelar
+              </Button>
+            </div>
+          </form>
+        </CardContent>
+      </Card>
+    </div>
   );
 };

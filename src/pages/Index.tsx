@@ -84,6 +84,14 @@ const Index = () => {
           >
             Ver Todas as Corridas
           </Button>
+          
+          <Button 
+            onClick={handleAddRace}
+            className="running-gradient text-white hover:opacity-90 transition-opacity"
+          >
+            <Plus className="w-4 h-4 mr-2" />
+            Adicionar Corrida
+          </Button>
         </div>
       );
     }
@@ -99,7 +107,7 @@ const Index = () => {
           Voltar
         </Button>
         
-        {currentView === "list" && (
+        {(currentView === "list" || currentView === "details") && (
           <Button 
             onClick={handleAddRace}
             className="running-gradient text-white hover:opacity-90 transition-opacity"
