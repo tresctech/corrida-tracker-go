@@ -1,3 +1,4 @@
+
 import { useState } from "react";
 import { useForm, useFieldArray } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -23,21 +24,22 @@ const kitPickupSchema = z.object({
   time: z.string().min(1, "Horário é obrigatório"),
 });
 
-const raceSchema = z.object({
+// Separate schema for form data to handle the array properly
+const raceFormSchema = z.object({
   name: z.string().min(1, "Nome da corrida é obrigatório"),
   status: z.enum(["upcoming", "completed"]),
   raceDate: z.string().min(1, "Data da corrida é obrigatória"),
   startTime: z.string().min(1, "Horário de largada é obrigatório"),
   distance: z.number().min(0.1, "Distância deve ser maior que 0"),
   kitPickupAddress: z.string().min(1, "Endereço de retirada do kit é obrigatório"),
-  kitPickupDates: z.union([
-    z.array(kitPickupSchema).min(1, "Pelo menos uma data de retirada é obrigatória"),
-    z.literal("to-be-defined")
-  ]),
+  kitPickupDates: z.array(kitPickupSchema).min(1, "Pelo menos uma data de retirada é obrigatória"),
   registrationProofUrl: z.string().optional(),
   registrationProofType: z.enum(["file", "link"]).optional(),
   observations: z.string().optional(),
 });
+
+// Form data type for internal use
+type RaceFormInputs = z.infer<typeof raceFormSchema>;
 
 interface RaceFormProps {
   race?: Race;
@@ -53,7 +55,7 @@ export const RaceForm = ({ race, onSubmit, onCancel }: RaceFormProps) => {
 
   const getDefaultKitPickupDates = () => {
     if (race?.kitPickupDates === 'to-be-defined') {
-      return [];
+      return [{ date: "", time: "" }];
     }
     if (race?.kitPickupDates && Array.isArray(race.kitPickupDates)) {
       return race.kitPickupDates.map(pickup => ({
@@ -71,8 +73,8 @@ export const RaceForm = ({ race, onSubmit, onCancel }: RaceFormProps) => {
     watch,
     control,
     formState: { errors, isSubmitting },
-  } = useForm<RaceFormData>({
-    resolver: zodResolver(raceSchema),
+  } = useForm<RaceFormInputs>({
+    resolver: zodResolver(raceFormSchema),
     defaultValues: race ? {
       name: race.name,
       status: race.status,
@@ -80,7 +82,7 @@ export const RaceForm = ({ race, onSubmit, onCancel }: RaceFormProps) => {
       startTime: race.startTime,
       distance: race.distance,
       kitPickupAddress: race.kitPickupAddress,
-      kitPickupDates: race.kitPickupDates === 'to-be-defined' ? 'to-be-defined' : getDefaultKitPickupDates(),
+      kitPickupDates: getDefaultKitPickupDates(),
       registrationProofUrl: race.registrationProof?.url || "",
       registrationProofType: race.registrationProof?.type || "link",
       observations: race.observations || "",
@@ -94,15 +96,14 @@ export const RaceForm = ({ race, onSubmit, onCancel }: RaceFormProps) => {
   const { fields, append, remove } = useFieldArray({
     control,
     name: "kitPickupDates",
-    shouldUnregister: false,
   });
 
   const status = watch("status");
   const registrationProofType = watch("registrationProofType");
 
-  const onFormSubmit = async (data: RaceFormData) => {
+  const onFormSubmit = async (data: RaceFormInputs) => {
     try {
-      const formattedData = {
+      const formattedData: RaceFormData = {
         ...data,
         kitPickupDates: isToBeDefinedKit ? 'to-be-defined' as const : data.kitPickupDates,
       };
@@ -132,9 +133,13 @@ export const RaceForm = ({ race, onSubmit, onCancel }: RaceFormProps) => {
   const handleToBeDefinedChange = (value: boolean) => {
     setIsToBeDefinedKit(value);
     if (value) {
-      setValue("kitPickupDates", "to-be-defined");
+      // Don't change the form fields when "to be defined" is selected
+      // The actual conversion happens in onFormSubmit
     } else {
-      setValue("kitPickupDates", [{ date: "", time: "" }]);
+      // Ensure we have at least one entry when switching back
+      if (fields.length === 0) {
+        append({ date: "", time: "" });
+      }
     }
   };
 
@@ -288,7 +293,7 @@ export const RaceForm = ({ race, onSubmit, onCancel }: RaceFormProps) => {
               </div>
             </div>
 
-            {!isToBeDefinedKit && Array.isArray(fields) && (
+            {!isToBeDefinedKit && (
               <div className="space-y-3">
                 {fields.map((field, index) => (
                   <div key={field.id} className="flex gap-2 items-end">
