@@ -7,8 +7,10 @@ export interface Race {
   startTime: string;
   distance: number;
   kitPickupAddress: string;
-  kitPickupDate: Date;
-  kitPickupTime: string;
+  kitPickupDates: Array<{
+    date: Date;
+    time: string;
+  }> | 'to-be-defined';
   registrationProof?: {
     type: 'file' | 'link';
     url: string;
@@ -26,8 +28,10 @@ export interface RaceFormData {
   startTime: string;
   distance: number;
   kitPickupAddress: string;
-  kitPickupDate: string;
-  kitPickupTime: string;
+  kitPickupDates: Array<{
+    date: string;
+    time: string;
+  }> | 'to-be-defined';
   registrationProofUrl?: string;
   registrationProofType?: 'file' | 'link';
   observations?: string;

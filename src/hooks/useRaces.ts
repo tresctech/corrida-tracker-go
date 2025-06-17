@@ -16,7 +16,12 @@ export const useRaces = () => {
         const parsedRaces = JSON.parse(stored).map((race: any) => ({
           ...race,
           raceDate: new Date(race.raceDate),
-          kitPickupDate: new Date(race.kitPickupDate),
+          kitPickupDates: race.kitPickupDates === 'to-be-defined' 
+            ? 'to-be-defined' 
+            : race.kitPickupDates?.map((pickup: any) => ({
+                date: new Date(pickup.date),
+                time: pickup.time,
+              })) || [],
           createdAt: new Date(race.createdAt),
           updatedAt: new Date(race.updatedAt),
         }));
@@ -48,8 +53,12 @@ export const useRaces = () => {
       startTime: raceData.startTime,
       distance: raceData.distance,
       kitPickupAddress: raceData.kitPickupAddress,
-      kitPickupDate: new Date(raceData.kitPickupDate),
-      kitPickupTime: raceData.kitPickupTime,
+      kitPickupDates: raceData.kitPickupDates === 'to-be-defined'
+        ? 'to-be-defined'
+        : raceData.kitPickupDates.map(pickup => ({
+            date: new Date(pickup.date),
+            time: pickup.time,
+          })),
       registrationProof: raceData.registrationProofUrl ? {
         type: raceData.registrationProofType || 'link',
         url: raceData.registrationProofUrl,
@@ -76,8 +85,12 @@ export const useRaces = () => {
       startTime: raceData.startTime,
       distance: raceData.distance,
       kitPickupAddress: raceData.kitPickupAddress,
-      kitPickupDate: new Date(raceData.kitPickupDate),
-      kitPickupTime: raceData.kitPickupTime,
+      kitPickupDates: raceData.kitPickupDates === 'to-be-defined'
+        ? 'to-be-defined'
+        : raceData.kitPickupDates.map(pickup => ({
+            date: new Date(pickup.date),
+            time: pickup.time,
+          })),
       registrationProof: raceData.registrationProofUrl ? {
         type: raceData.registrationProofType || 'link',
         url: raceData.registrationProofUrl,

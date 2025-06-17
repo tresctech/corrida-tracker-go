@@ -1,4 +1,3 @@
-
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -86,15 +85,30 @@ export const RaceDetails = ({ race, onEdit, onClose }: RaceDetailsProps) => {
                 <p className="text-green-700">{race.kitPickupAddress}</p>
               </div>
             </div>
-            <div className="flex items-center gap-3">
-              <Calendar className="w-5 h-5 text-green-600" />
-              <div>
-                <p className="font-medium text-green-900">Data e Horário</p>
-                <p className="text-green-700">
-                  {format(race.kitPickupDate, "dd/MM/yyyy")} às {race.kitPickupTime}
-                </p>
+            
+            {race.kitPickupDates === 'to-be-defined' ? (
+              <div className="flex items-center gap-3">
+                <Calendar className="w-5 h-5 text-yellow-600" />
+                <div>
+                  <p className="font-medium text-yellow-900">Datas e Horários</p>
+                  <p className="text-yellow-700">A definir</p>
+                </div>
               </div>
-            </div>
+            ) : (
+              <div className="space-y-2">
+                <div className="flex items-center gap-3">
+                  <Calendar className="w-5 h-5 text-green-600" />
+                  <p className="font-medium text-green-900">Datas e Horários Disponíveis</p>
+                </div>
+                <div className="ml-8 space-y-1">
+                  {race.kitPickupDates.map((pickup, index) => (
+                    <p key={index} className="text-green-700">
+                      {format(pickup.date, "dd/MM/yyyy")} às {pickup.time}
+                    </p>
+                  ))}
+                </div>
+              </div>
+            )}
           </div>
         </div>
 

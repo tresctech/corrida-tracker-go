@@ -1,6 +1,5 @@
-
 import { useState } from "react";
-import { useForm } from "react-hook-form";
+import { useForm, useFieldArray } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
 import { Button } from "@/components/ui/button";
@@ -15,9 +14,14 @@ import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover
 import { cn } from "@/lib/utils";
 import { format } from "date-fns";
 import { ptBR } from "date-fns/locale";
-import { CalendarIcon, Save, X, Upload, Link as LinkIcon } from "lucide-react";
+import { CalendarIcon, Save, X, Upload, Link as LinkIcon, Plus, Trash2 } from "lucide-react";
 import { RaceFormData, Race } from "@/types/race";
 import { useToast } from "@/hooks/use-toast";
+
+const kitPickupSchema = z.object({
+  date: z.string().min(1, "Data é obrigatória"),
+  time: z.string().min(1, "Horário é obrigatório"),
+});
 
 const raceSchema = z.object({
   name: z.string().min(1, "Nome da corrida é obrigatório"),
@@ -26,8 +30,10 @@ const raceSchema = z.object({
   startTime: z.string().min(1, "Horário de largada é obrigatório"),
   distance: z.number().min(0.1, "Distância deve ser maior que 0"),
   kitPickupAddress: z.string().min(1, "Endereço de retirada do kit é obrigatório"),
-  kitPickupDate: z.string().min(1, "Data de retirada do kit é obrigatória"),
-  kitPickupTime: z.string().min(1, "Horário de retirada do kit é obrigatório"),
+  kitPickupDates: z.union([
+    z.array(kitPickupSchema).min(1, "Pelo menos uma data de retirada é obrigatória"),
+    z.literal("to-be-defined")
+  ]),
   registrationProofUrl: z.string().optional(),
   registrationProofType: z.enum(["file", "link"]).optional(),
   observations: z.string().optional(),
@@ -42,15 +48,28 @@ interface RaceFormProps {
 export const RaceForm = ({ race, onSubmit, onCancel }: RaceFormProps) => {
   const { toast } = useToast();
   const [raceDateOpen, setRaceDateOpen] = useState(false);
-  const [kitDateOpen, setKitDateOpen] = useState(false);
   const [raceDate, setRaceDate] = useState<Date | undefined>(race?.raceDate);
-  const [kitPickupDate, setKitPickupDate] = useState<Date | undefined>(race?.kitPickupDate);
+  const [isToBeDefinedKit, setIsToBeDefinedKit] = useState(race?.kitPickupDates === 'to-be-defined');
+
+  const getDefaultKitPickupDates = () => {
+    if (race?.kitPickupDates === 'to-be-defined') {
+      return [];
+    }
+    if (race?.kitPickupDates && Array.isArray(race.kitPickupDates)) {
+      return race.kitPickupDates.map(pickup => ({
+        date: format(pickup.date, "yyyy-MM-dd"),
+        time: pickup.time,
+      }));
+    }
+    return [{ date: "", time: "" }];
+  };
 
   const {
     register,
     handleSubmit,
     setValue,
     watch,
+    control,
     formState: { errors, isSubmitting },
   } = useForm<RaceFormData>({
     resolver: zodResolver(raceSchema),
@@ -61,15 +80,20 @@ export const RaceForm = ({ race, onSubmit, onCancel }: RaceFormProps) => {
       startTime: race.startTime,
       distance: race.distance,
       kitPickupAddress: race.kitPickupAddress,
-      kitPickupDate: format(race.kitPickupDate, "yyyy-MM-dd"),
-      kitPickupTime: race.kitPickupTime,
+      kitPickupDates: race.kitPickupDates === 'to-be-defined' ? 'to-be-defined' : getDefaultKitPickupDates(),
       registrationProofUrl: race.registrationProof?.url || "",
       registrationProofType: race.registrationProof?.type || "link",
       observations: race.observations || "",
     } : {
       status: "upcoming",
       registrationProofType: "link",
+      kitPickupDates: [{ date: "", time: "" }],
     },
+  });
+
+  const { fields, append, remove } = useFieldArray({
+    control,
+    name: "kitPickupDates",
   });
 
   const status = watch("status");
@@ -77,7 +101,11 @@ export const RaceForm = ({ race, onSubmit, onCancel }: RaceFormProps) => {
 
   const onFormSubmit = async (data: RaceFormData) => {
     try {
-      onSubmit(data);
+      const formattedData = {
+        ...data,
+        kitPickupDates: isToBeDefinedKit ? 'to-be-defined' as const : data.kitPickupDates,
+      };
+      onSubmit(formattedData);
       toast({
         title: race ? "Corrida atualizada!" : "Corrida cadastrada!",
         description: `${data.name} foi ${race ? 'atualizada' : 'cadastrada'} com sucesso.`,
@@ -94,11 +122,18 @@ export const RaceForm = ({ race, onSubmit, onCancel }: RaceFormProps) => {
   const handleFileUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
     if (file) {
-      // In a real app, you would upload the file to a server
-      // For now, we'll create a local URL
       const url = URL.createObjectURL(file);
       setValue("registrationProofUrl", url);
       setValue("registrationProofType", "file");
+    }
+  };
+
+  const handleToBeDefinedChange = (value: boolean) => {
+    setIsToBeDefinedKit(value);
+    if (value) {
+      setValue("kitPickupDates", "to-be-defined");
+    } else {
+      setValue("kitPickupDates", [{ date: "", time: "" }]);
     }
   };
 
@@ -236,55 +271,84 @@ export const RaceForm = ({ race, onSubmit, onCancel }: RaceFormProps) => {
             )}
           </div>
 
-          {/* Data e Horário da Retirada do Kit */}
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <div className="space-y-2">
-              <Label>Data de Retirada do Kit *</Label>
-              <Popover open={kitDateOpen} onOpenChange={setKitDateOpen}>
-                <PopoverTrigger asChild>
-                  <Button
-                    variant="outline"
-                    className={cn(
-                      "w-full justify-start text-left font-normal",
-                      !kitPickupDate && "text-muted-foreground"
-                    )}
-                  >
-                    <CalendarIcon className="mr-2 h-4 w-4" />
-                    {kitPickupDate ? format(kitPickupDate, "dd/MM/yyyy") : "Selecione a data"}
-                  </Button>
-                </PopoverTrigger>
-                <PopoverContent className="w-auto p-0" align="start">
-                  <Calendar
-                    mode="single"
-                    selected={kitPickupDate}
-                    onSelect={(date) => {
-                      setKitPickupDate(date);
-                      if (date) {
-                        setValue("kitPickupDate", format(date, "yyyy-MM-dd"));
-                      }
-                      setKitDateOpen(false);
-                    }}
-                    initialFocus
-                    className="pointer-events-auto"
-                  />
-                </PopoverContent>
-              </Popover>
-              {errors.kitPickupDate && (
-                <p className="text-sm text-red-500">{errors.kitPickupDate.message}</p>
-              )}
+          {/* Datas de Retirada do Kit */}
+          <div className="space-y-4">
+            <div className="flex items-center justify-between">
+              <Label>Datas de Retirada do Kit *</Label>
+              <div className="flex items-center gap-2">
+                <input
+                  type="checkbox"
+                  id="toBeDefinedKit"
+                  checked={isToBeDefinedKit}
+                  onChange={(e) => handleToBeDefinedChange(e.target.checked)}
+                  className="rounded"
+                />
+                <Label htmlFor="toBeDefinedKit" className="text-sm">A Definir</Label>
+              </div>
             </div>
 
-            <div className="space-y-2">
-              <Label htmlFor="kitPickupTime">Horário de Retirada do Kit *</Label>
-              <Input
-                id="kitPickupTime"
-                type="time"
-                {...register("kitPickupTime")}
-              />
-              {errors.kitPickupTime && (
-                <p className="text-sm text-red-500">{errors.kitPickupTime.message}</p>
-              )}
-            </div>
+            {!isToBeDefinedKit && (
+              <div className="space-y-3">
+                {fields.map((field, index) => (
+                  <div key={field.id} className="flex gap-2 items-end">
+                    <div className="flex-1 grid grid-cols-2 gap-2">
+                      <div className="space-y-1">
+                        <Label className="text-sm">Data</Label>
+                        <Input
+                          type="date"
+                          {...register(`kitPickupDates.${index}.date` as const)}
+                        />
+                      </div>
+                      <div className="space-y-1">
+                        <Label className="text-sm">Horário</Label>
+                        <Input
+                          type="time"
+                          {...register(`kitPickupDates.${index}.time` as const)}
+                        />
+                      </div>
+                    </div>
+                    {fields.length > 1 && (
+                      <Button
+                        type="button"
+                        variant="outline"
+                        size="sm"
+                        onClick={() => remove(index)}
+                        className="text-red-600 hover:text-red-700"
+                      >
+                        <Trash2 className="w-4 h-4" />
+                      </Button>
+                    )}
+                  </div>
+                ))}
+                
+                <Button
+                  type="button"
+                  variant="outline"
+                  size="sm"
+                  onClick={() => append({ date: "", time: "" })}
+                  className="w-full"
+                >
+                  <Plus className="w-4 h-4 mr-2" />
+                  Adicionar Data de Retirada
+                </Button>
+              </div>
+            )}
+
+            {isToBeDefinedKit && (
+              <div className="bg-yellow-50 p-4 rounded-lg border border-yellow-200">
+                <p className="text-yellow-800 text-sm">
+                  As datas de retirada do kit serão definidas posteriormente.
+                </p>
+              </div>
+            )}
+
+            {errors.kitPickupDates && (
+              <p className="text-sm text-red-500">
+                {typeof errors.kitPickupDates === 'object' && 'message' in errors.kitPickupDates 
+                  ? errors.kitPickupDates.message 
+                  : "Erro nas datas de retirada do kit"}
+              </p>
+            )}
           </div>
 
           {/* Comprovante de Inscrição */}
