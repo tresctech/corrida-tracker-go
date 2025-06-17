@@ -1,6 +1,5 @@
 
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
 import { Calendar, Clock, MapPin, Medal, Trophy, Heart } from "lucide-react";
 import { DashboardProps } from "@/types/dashboard";
 import { format } from "date-fns";
@@ -111,20 +110,6 @@ export const Dashboard = ({ stats, onAddRace }: DashboardProps) => {
           </CardContent>
         </Card>
       )}
-
-      {/* Quick Actions */}
-      <Card className="running-card">
-        <CardHeader>
-          <CardTitle>Ações Rápidas</CardTitle>
-          <CardContent>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <Button onClick={onAddRace} className="running-gradient text-white hover:opacity-90 transition-opacity">
-                Adicionar Corrida
-              </Button>
-            </div>
-          </CardContent>
-        </CardHeader>
-      </Card>
     </div>
   );
 };

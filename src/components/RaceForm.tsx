@@ -1,3 +1,4 @@
+
 import { useState } from "react";
 import { useForm, useFieldArray } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -43,6 +44,12 @@ interface RaceFormProps {
   onCancel: () => void;
 }
 
+type KitPickupDateItem = {
+  date: string;
+  startTime: string;
+  endTime: string;
+};
+
 export const RaceForm = ({ race, onSubmit, onCancel }: RaceFormProps) => {
   const [toBeDefinedKitPickup, setToBeDefinedKitPickup] = useState(
     race?.kitPickupDates === "to-be-defined"
@@ -78,7 +85,7 @@ export const RaceForm = ({ race, onSubmit, onCancel }: RaceFormProps) => {
 
   const { fields, append, remove } = useFieldArray({
     control: form.control,
-    name: "kitPickupDates" as "kitPickupDates",
+    name: "kitPickupDates",
   });
 
   const watchStatus = form.watch("status");
@@ -103,12 +110,12 @@ export const RaceForm = ({ race, onSubmit, onCancel }: RaceFormProps) => {
   };
 
   const addKitPickupDate = () => {
-    if (!toBeDefinedKitPickup && Array.isArray(form.getValues("kitPickupDates"))) {
+    if (!toBeDefinedKitPickup) {
       append({
         date: "",
         startTime: "",
         endTime: "",
-      });
+      } as KitPickupDateItem);
     }
   };
 
@@ -247,7 +254,7 @@ export const RaceForm = ({ race, onSubmit, onCancel }: RaceFormProps) => {
                     </div>
 
                     {Array.isArray(form.watch("kitPickupDates")) && 
-                     (form.watch("kitPickupDates") as Array<{date: string; startTime: string; endTime: string}>).map((_, index) => (
+                     (form.watch("kitPickupDates") as KitPickupDateItem[]).map((_, index) => (
                       <Card key={index} className="p-4">
                         <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                           <div>
