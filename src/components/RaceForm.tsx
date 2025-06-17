@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import { useForm, useFieldArray } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -50,12 +49,17 @@ type KitPickupDateItem = {
   endTime: string;
 };
 
+// Create a modified form type for internal use where kitPickupDates is always an array
+type InternalFormData = Omit<RaceFormData, 'kitPickupDates'> & {
+  kitPickupDates: KitPickupDateItem[];
+};
+
 export const RaceForm = ({ race, onSubmit, onCancel }: RaceFormProps) => {
   const [toBeDefinedKitPickup, setToBeDefinedKitPickup] = useState(
     race?.kitPickupDates === "to-be-defined"
   );
 
-  const form = useForm<RaceFormData>({
+  const form = useForm<InternalFormData>({
     resolver: zodResolver(raceFormSchema),
     defaultValues: {
       name: race?.name || "",
@@ -65,7 +69,7 @@ export const RaceForm = ({ race, onSubmit, onCancel }: RaceFormProps) => {
       distance: race?.distance || 0,
       kitPickupAddress: race?.kitPickupAddress || "",
       kitPickupDates: race?.kitPickupDates === "to-be-defined" 
-        ? "to-be-defined" 
+        ? []
         : Array.isArray(race?.kitPickupDates) 
           ? race.kitPickupDates.map(date => ({
               date: format(date.date, "yyyy-MM-dd"),
@@ -90,12 +94,14 @@ export const RaceForm = ({ race, onSubmit, onCancel }: RaceFormProps) => {
 
   const watchStatus = form.watch("status");
 
-  const handleSubmit = (data: RaceFormData) => {
-    const processedData = {
+  const handleSubmit = (data: InternalFormData) => {
+    // Convert back to RaceFormData format
+    const processedData: RaceFormData = {
       ...data,
       distance: Number(data.distance),
       overallPlacement: data.overallPlacement ? Number(data.overallPlacement) : undefined,
       ageGroupPlacement: data.ageGroupPlacement ? Number(data.ageGroupPlacement) : undefined,
+      kitPickupDates: toBeDefinedKitPickup ? "to-be-defined" : data.kitPickupDates,
     };
     onSubmit(processedData);
   };
@@ -103,8 +109,7 @@ export const RaceForm = ({ race, onSubmit, onCancel }: RaceFormProps) => {
   const handleKitPickupToggle = (checked: boolean) => {
     setToBeDefinedKitPickup(checked);
     if (checked) {
-      form.setValue("kitPickupDates", "to-be-defined");
-    } else {
+      // Clear the array when switching to "to-be-defined"
       form.setValue("kitPickupDates", []);
     }
   };
@@ -115,7 +120,7 @@ export const RaceForm = ({ race, onSubmit, onCancel }: RaceFormProps) => {
         date: "",
         startTime: "",
         endTime: "",
-      } as KitPickupDateItem);
+      });
     }
   };
 
@@ -253,9 +258,8 @@ export const RaceForm = ({ race, onSubmit, onCancel }: RaceFormProps) => {
                       </Button>
                     </div>
 
-                    {Array.isArray(form.watch("kitPickupDates")) && 
-                     (form.watch("kitPickupDates") as KitPickupDateItem[]).map((_, index) => (
-                      <Card key={index} className="p-4">
+                    {fields.map((field, index) => (
+                      <Card key={field.id} className="p-4">
                         <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                           <div>
                             <Label htmlFor={`kitPickupDates.${index}.date`}>Data</Label>
