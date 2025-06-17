@@ -1,4 +1,6 @@
+
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
 import { Calendar, Clock, MapPin, Medal, Trophy, Heart } from "lucide-react";
 import { DashboardProps } from "@/types/dashboard";
 import { format } from "date-fns";
