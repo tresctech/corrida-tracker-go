@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -7,7 +6,7 @@ import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from "@/components/ui/alert-dialog";
-import { Calendar, Clock, MapPin, Edit, Trash2, ExternalLink, FileText, Search, Filter, List, Calendar as CalendarIcon } from "lucide-react";
+import { Calendar, Clock, MapPin, Edit, Trash2, ExternalLink, FileText, Search, Filter, List, Calendar as CalendarIcon, Heart } from "lucide-react";
 import { Race, ViewMode, FilterStatus, SortOrder } from "@/types/race";
 import { format } from "date-fns";
 import { ptBR } from "date-fns/locale";
@@ -49,6 +48,7 @@ export const RaceList = ({ races, onEditRace, onDeleteRace, onViewDetails }: Rac
 
   const upcomingRaces = filteredAndSortedRaces.filter(race => race.status === "upcoming");
   const completedRaces = filteredAndSortedRaces.filter(race => race.status === "completed");
+  const interestRaces = filteredAndSortedRaces.filter(race => race.status === "interest");
 
   const RaceCard = ({ race }: { race: Race }) => (
     <Card className="running-card hover:shadow-lg transition-all duration-300 animate-slide-in">
@@ -69,12 +69,15 @@ export const RaceList = ({ races, onEditRace, onDeleteRace, onViewDetails }: Rac
           </div>
           <Badge 
             variant="outline" 
-            className={race.status === "upcoming" 
-              ? "bg-blue-50 text-blue-700 border-blue-200" 
-              : "bg-green-50 text-green-700 border-green-200"
+            className={
+              race.status === "upcoming" 
+                ? "bg-blue-50 text-blue-700 border-blue-200" 
+                : race.status === "completed"
+                ? "bg-green-50 text-green-700 border-green-200"
+                : "bg-purple-50 text-purple-700 border-purple-200"
             }
           >
-            {race.status === "upcoming" ? "A Fazer" : "Realizada"}
+            {race.status === "upcoming" ? "A Fazer" : race.status === "completed" ? "Realizada" : "Interesse"}
           </Badge>
         </div>
       </CardHeader>
@@ -96,7 +99,7 @@ export const RaceList = ({ races, onEditRace, onDeleteRace, onViewDetails }: Rac
               ) : (
                 race.kitPickupDates.length > 0 && (
                   <p className="text-sm text-gray-500">
-                    {format(race.kitPickupDates[0].date, "dd/MM/yyyy")} às {race.kitPickupDates[0].time}
+                    {format(race.kitPickupDates[0].date, "dd/MM/yyyy")} das {race.kitPickupDates[0].startTime} às {race.kitPickupDates[0].endTime}
                     {race.kitPickupDates.length > 1 && ` (+${race.kitPickupDates.length - 1} mais)`}
                   </p>
                 )
@@ -194,6 +197,7 @@ export const RaceList = ({ races, onEditRace, onDeleteRace, onViewDetails }: Rac
                   <SelectItem value="all">Todas</SelectItem>
                   <SelectItem value="upcoming">A Fazer</SelectItem>
                   <SelectItem value="completed">Realizadas</SelectItem>
+                  <SelectItem value="interest">Interesse</SelectItem>
                 </SelectContent>
               </Select>
 
@@ -235,7 +239,7 @@ export const RaceList = ({ races, onEditRace, onDeleteRace, onViewDetails }: Rac
       {/* Race Lists */}
       {viewMode === "list" ? (
         <Tabs defaultValue="upcoming" className="w-full">
-          <TabsList className="grid w-full grid-cols-2">
+          <TabsList className="grid w-full grid-cols-3">
             <TabsTrigger value="upcoming" className="flex items-center gap-2">
               <Calendar className="w-4 h-4" />
               A Fazer ({upcomingRaces.length})
@@ -245,6 +249,10 @@ export const RaceList = ({ races, onEditRace, onDeleteRace, onViewDetails }: Rac
                 ✓
               </Badge>
               Realizadas ({completedRaces.length})
+            </TabsTrigger>
+            <TabsTrigger value="interest" className="flex items-center gap-2">
+              <Heart className="w-4 h-4" />
+              Interesse ({interestRaces.length})
             </TabsTrigger>
           </TabsList>
           
@@ -275,6 +283,22 @@ export const RaceList = ({ races, onEditRace, onDeleteRace, onViewDetails }: Rac
               <Card className="running-card">
                 <CardContent className="pt-6 text-center">
                   <p className="text-muted-foreground">Nenhuma corrida realizada encontrada.</p>
+                </CardContent>
+              </Card>
+            )}
+          </TabsContent>
+          
+          <TabsContent value="interest" className="mt-4">
+            {interestRaces.length > 0 ? (
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                {interestRaces.map((race) => (
+                  <RaceCard key={race.id} race={race} />
+                ))}
+              </div>
+            ) : (
+              <Card className="running-card">
+                <CardContent className="pt-6 text-center">
+                  <p className="text-muted-foreground">Nenhuma corrida de interesse encontrada.</p>
                 </CardContent>
               </Card>
             )}

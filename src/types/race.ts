@@ -2,7 +2,7 @@
 export interface Race {
   id: string;
   name: string;
-  status: 'upcoming' | 'completed';
+  status: 'upcoming' | 'completed' | 'interest';
   raceDate: Date;
   startTime: string;
   distance: number;
@@ -24,7 +24,7 @@ export interface Race {
 
 export interface RaceFormData {
   name: string;
-  status: 'upcoming' | 'completed';
+  status: 'upcoming' | 'completed' | 'interest';
   raceDate: string;
   startTime: string;
   distance: number;
@@ -43,10 +43,11 @@ export interface RaceStats {
   totalRaces: number;
   completedRaces: number;
   upcomingRaces: number;
+  interestRaces: number;
   totalKilometers: number;
   nextRace?: Race;
 }
 
 export type ViewMode = 'list' | 'calendar';
-export type FilterStatus = 'all' | 'upcoming' | 'completed';
+export type FilterStatus = 'all' | 'upcoming' | 'completed' | 'interest';
 export type SortOrder = 'date-asc' | 'date-desc' | 'name-asc' | 'name-desc';

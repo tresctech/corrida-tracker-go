@@ -27,7 +27,7 @@ const kitPickupSchema = z.object({
 // Separate schema for form data to handle the array properly
 const raceFormSchema = z.object({
   name: z.string().min(1, "Nome da corrida é obrigatório"),
-  status: z.enum(["upcoming", "completed"]),
+  status: z.enum(["upcoming", "completed", "interest"]),
   raceDate: z.string().min(1, "Data da corrida é obrigatória"),
   startTime: z.string().min(1, "Horário de largada é obrigatório"),
   distance: z.number().min(0.1, "Distância deve ser maior que 0"),
@@ -53,7 +53,7 @@ export const RaceForm = ({ race, onSubmit, onCancel }: RaceFormProps) => {
   const [raceDate, setRaceDate] = useState<Date | undefined>(race?.raceDate);
   const [isToBeDefinedKit, setIsToBeDefinedKit] = useState(race?.kitPickupDates === 'to-be-defined');
 
-  const getDefaultKitPickupDates = () => {
+  const getDefaultKitPickupDates = (): Array<{ date: string; startTime: string; endTime: string; }> => {
     if (race?.kitPickupDates === 'to-be-defined') {
       return [{ date: "", startTime: "", endTime: "" }];
     }
@@ -174,7 +174,7 @@ export const RaceForm = ({ race, onSubmit, onCancel }: RaceFormProps) => {
             <Label>Status *</Label>
             <Select
               value={status}
-              onValueChange={(value: "upcoming" | "completed") => setValue("status", value)}
+              onValueChange={(value: "upcoming" | "completed" | "interest") => setValue("status", value)}
             >
               <SelectTrigger>
                 <SelectValue />
@@ -191,6 +191,13 @@ export const RaceForm = ({ race, onSubmit, onCancel }: RaceFormProps) => {
                   <div className="flex items-center gap-2">
                     <Badge variant="outline" className="bg-green-50 text-green-700 border-green-200">
                       Realizada
+                    </Badge>
+                  </div>
+                </SelectItem>
+                <SelectItem value="interest">
+                  <div className="flex items-center gap-2">
+                    <Badge variant="outline" className="bg-purple-50 text-purple-700 border-purple-200">
+                      Interesse
                     </Badge>
                   </div>
                 </SelectItem>

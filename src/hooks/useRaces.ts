@@ -121,6 +121,7 @@ export const useRaces = () => {
   const getStats = (): RaceStats => {
     const completedRaces = races.filter(race => race.status === 'completed');
     const upcomingRaces = races.filter(race => race.status === 'upcoming');
+    const interestRaces = races.filter(race => race.status === 'interest');
     const totalKilometers = completedRaces.reduce((sum, race) => sum + race.distance, 0);
     
     const nextRace = upcomingRaces
@@ -130,6 +131,7 @@ export const useRaces = () => {
       totalRaces: races.length,
       completedRaces: completedRaces.length,
       upcomingRaces: upcomingRaces.length,
+      interestRaces: interestRaces.length,
       totalKilometers,
       nextRace,
     };
