@@ -31,21 +31,23 @@ export const useSupabaseRaces = () => {
       const formattedRaces: Race[] = data.map((race: any) => ({
         id: race.id,
         name: race.name,
-        status: race.status,
+        status: race.status as 'upcoming' | 'completed' | 'interest',
         raceDate: new Date(race.race_date),
         startTime: race.start_time,
-        distance: parseFloat(race.distance),
+        distance: parseFloat(race.distance.toString()),
         kitPickupAddress: race.kit_pickup_address,
         kitPickupDates: race.kit_pickup_dates === 'to-be-defined' 
           ? 'to-be-defined' 
-          : race.kit_pickup_dates?.map((pickup: any) => ({
-              date: new Date(pickup.date),
-              startTime: pickup.startTime,
-              endTime: pickup.endTime,
-            })) || [],
-        registrationProof: race.registration_proof,
+          : Array.isArray(race.kit_pickup_dates) 
+            ? race.kit_pickup_dates.map((pickup: any) => ({
+                date: new Date(pickup.date),
+                startTime: pickup.startTime,
+                endTime: pickup.endTime,
+              }))
+            : [],
+        registrationProof: race.registration_proof as Race['registrationProof'],
         observations: race.observations,
-        raceResults: race.race_results,
+        raceResults: race.race_results as Race['raceResults'],
         createdAt: new Date(race.created_at),
         updatedAt: new Date(race.updated_at),
       }));
@@ -77,7 +79,7 @@ export const useSupabaseRaces = () => {
         status: raceData.status,
         race_date: raceData.raceDate,
         start_time: raceData.startTime,
-        distance: raceData.distance,
+        distance: raceData.distance.toString(),
         kit_pickup_address: raceData.kitPickupAddress,
         kit_pickup_dates: raceData.kitPickupDates === 'to-be-defined'
           ? 'to-be-defined'
@@ -106,21 +108,23 @@ export const useSupabaseRaces = () => {
       const newRace: Race = {
         id: data.id,
         name: data.name,
-        status: data.status,
+        status: data.status as 'upcoming' | 'completed' | 'interest',
         raceDate: new Date(data.race_date),
         startTime: data.start_time,
-        distance: parseFloat(data.distance),
+        distance: parseFloat(data.distance.toString()),
         kitPickupAddress: data.kit_pickup_address,
         kitPickupDates: data.kit_pickup_dates === 'to-be-defined' 
           ? 'to-be-defined' 
-          : data.kit_pickup_dates?.map((pickup: any) => ({
-              date: new Date(pickup.date),
-              startTime: pickup.startTime,
-              endTime: pickup.endTime,
-            })) || [],
-        registrationProof: data.registration_proof,
+          : Array.isArray(data.kit_pickup_dates)
+            ? data.kit_pickup_dates.map((pickup: any) => ({
+                date: new Date(pickup.date),
+                startTime: pickup.startTime,
+                endTime: pickup.endTime,
+              }))
+            : [],
+        registrationProof: data.registration_proof as Race['registrationProof'],
         observations: data.observations,
-        raceResults: data.race_results,
+        raceResults: data.race_results as Race['raceResults'],
         createdAt: new Date(data.created_at),
         updatedAt: new Date(data.updated_at),
       };
@@ -153,7 +157,7 @@ export const useSupabaseRaces = () => {
         status: raceData.status,
         race_date: raceData.raceDate,
         start_time: raceData.startTime,
-        distance: raceData.distance,
+        distance: raceData.distance.toString(),
         kit_pickup_address: raceData.kitPickupAddress,
         kit_pickup_dates: raceData.kitPickupDates === 'to-be-defined'
           ? 'to-be-defined'
@@ -185,21 +189,23 @@ export const useSupabaseRaces = () => {
       const updatedRace: Race = {
         id: data.id,
         name: data.name,
-        status: data.status,
+        status: data.status as 'upcoming' | 'completed' | 'interest',
         raceDate: new Date(data.race_date),
         startTime: data.start_time,
-        distance: parseFloat(data.distance),
+        distance: parseFloat(data.distance.toString()),
         kitPickupAddress: data.kit_pickup_address,
         kitPickupDates: data.kit_pickup_dates === 'to-be-defined' 
           ? 'to-be-defined' 
-          : data.kit_pickup_dates?.map((pickup: any) => ({
-              date: new Date(pickup.date),
-              startTime: pickup.startTime,
-              endTime: pickup.endTime,
-            })) || [],
-        registrationProof: data.registration_proof,
+          : Array.isArray(data.kit_pickup_dates)
+            ? data.kit_pickup_dates.map((pickup: any) => ({
+                date: new Date(pickup.date),
+                startTime: pickup.startTime,
+                endTime: pickup.endTime,
+              }))
+            : [],
+        registrationProof: data.registration_proof as Race['registrationProof'],
         observations: data.observations,
-        raceResults: data.race_results,
+        raceResults: data.race_results as Race['raceResults'],
         createdAt: new Date(data.created_at),
         updatedAt: new Date(data.updated_at),
       };
