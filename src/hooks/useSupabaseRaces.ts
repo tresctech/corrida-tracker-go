@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { Race, RaceFormData, RaceStats } from '@/types/race';
@@ -79,7 +78,7 @@ export const useSupabaseRaces = () => {
         status: raceData.status,
         race_date: raceData.raceDate,
         start_time: raceData.startTime,
-        distance: raceData.distance.toString(),
+        distance: raceData.distance, // Keep as number
         kit_pickup_address: raceData.kitPickupAddress,
         kit_pickup_dates: raceData.kitPickupDates === 'to-be-defined'
           ? 'to-be-defined'
@@ -99,7 +98,7 @@ export const useSupabaseRaces = () => {
 
       const { data, error } = await supabase
         .from('races')
-        .insert([raceToInsert])
+        .insert(raceToInsert) // Remove array wrapper
         .select()
         .single();
 
@@ -157,7 +156,7 @@ export const useSupabaseRaces = () => {
         status: raceData.status,
         race_date: raceData.raceDate,
         start_time: raceData.startTime,
-        distance: raceData.distance.toString(),
+        distance: raceData.distance, // Keep as number
         kit_pickup_address: raceData.kitPickupAddress,
         kit_pickup_dates: raceData.kitPickupDates === 'to-be-defined'
           ? 'to-be-defined'
