@@ -5,9 +5,8 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Separator } from "@/components/ui/separator";
 import { useToast } from "@/hooks/use-toast";
-import { Mail, Eye, EyeOff } from "lucide-react";
+import { Eye, EyeOff } from "lucide-react";
 
 interface AuthPageProps {
   onAuthSuccess: () => void;
@@ -71,29 +70,6 @@ export const AuthPage = ({ onAuthSuccess }: AuthPageProps) => {
     }
   };
 
-  const handleGoogleAuth = async () => {
-    setLoading(true);
-    try {
-      const redirectUrl = `${window.location.origin}/`;
-      
-      const { error } = await supabase.auth.signInWithOAuth({
-        provider: "google",
-        options: {
-          redirectTo: redirectUrl,
-        }
-      });
-
-      if (error) throw error;
-    } catch (error: any) {
-      toast({
-        title: "Erro no login com Google",
-        description: error.message,
-        variant: "destructive",
-      });
-      setLoading(false);
-    }
-  };
-
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 to-green-50 flex items-center justify-center p-4">
       <Card className="w-full max-w-md">
@@ -106,27 +82,6 @@ export const AuthPage = ({ onAuthSuccess }: AuthPageProps) => {
           </p>
         </CardHeader>
         <CardContent className="space-y-4">
-          <Button
-            onClick={handleGoogleAuth}
-            disabled={loading}
-            variant="outline"
-            className="w-full"
-          >
-            <Mail className="w-4 h-4 mr-2" />
-            {isLogin ? "Entrar" : "Cadastrar"} com Google
-          </Button>
-
-          <div className="relative">
-            <div className="absolute inset-0 flex items-center">
-              <Separator className="w-full" />
-            </div>
-            <div className="relative flex justify-center text-xs uppercase">
-              <span className="bg-background px-2 text-muted-foreground">
-                Ou continue com email
-              </span>
-            </div>
-          </div>
-
           <form onSubmit={handleEmailAuth} className="space-y-4">
             {!isLogin && (
               <div className="space-y-2">
