@@ -4,26 +4,44 @@ import { Dashboard } from "@/components/Dashboard";
 import { RaceForm } from "@/components/RaceForm";
 import { RaceList } from "@/components/RaceList";
 import { RaceDetails } from "@/components/RaceDetails";
-import { useRaces } from "@/hooks/useRaces";
+import { AuthPage } from "@/components/AuthPage";
+import { useAuth } from "@/hooks/useAuth";
+import { useSupabaseRaces } from "@/hooks/useSupabaseRaces";
 import { Race, RaceFormData } from "@/types/race";
 import { Button } from "@/components/ui/button";
-import { ArrowLeft, Plus } from "lucide-react";
+import { ArrowLeft, Plus, LogOut, User } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 
 type View = "dashboard" | "form" | "list" | "details";
 
 const Index = () => {
-  const { races, loading, addRace, updateRace, deleteRace, getStats } = useRaces();
+  const { user, loading: authLoading, signOut } = useAuth();
+  const { races, loading, addRace, updateRace, deleteRace, getStats } = useSupabaseRaces();
   const { toast } = useToast();
   const [currentView, setCurrentView] = useState<View>("dashboard");
   const [selectedRace, setSelectedRace] = useState<Race | undefined>();
+
+  if (authLoading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <div className="text-center">
+          <div className="w-8 h-8 border-4 border-blue-500 border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
+          <p className="text-muted-foreground">Carregando...</p>
+        </div>
+      </div>
+    );
+  }
+
+  if (!user) {
+    return <AuthPage onAuthSuccess={() => {}} />;
+  }
 
   if (loading) {
     return (
       <div className="min-h-screen flex items-center justify-center">
         <div className="text-center">
           <div className="w-8 h-8 border-4 border-blue-500 border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
-          <p className="text-muted-foreground">Carregando...</p>
+          <p className="text-muted-foreground">Carregando suas corridas...</p>
         </div>
       </div>
     );
@@ -46,52 +64,72 @@ const Index = () => {
     setCurrentView("details");
   };
 
-  const handleFormSubmit = (data: RaceFormData) => {
+  const handleFormSubmit = async (data: RaceFormData) => {
     if (selectedRace) {
-      updateRace(selectedRace.id, data);
+      await updateRace(selectedRace.id, data);
     } else {
-      addRace(data);
+      await addRace(data);
     }
     setCurrentView("dashboard");
     setSelectedRace(undefined);
   };
 
-  const handleDeleteRace = (id: string) => {
-    deleteRace(id);
-    toast({
-      title: "Corrida excluída",
-      description: "A corrida foi excluída com sucesso.",
-    });
+  const handleDeleteRace = async (id: string) => {
+    await deleteRace(id);
   };
 
   const handleBack = () => {
     if (currentView === "details" || currentView === "form") {
       setCurrentView("dashboard");
-    } else {
+    } else {  
       setCurrentView("dashboard");
     }
     setSelectedRace(undefined);
+  };
+
+  const handleSignOut = async () => {
+    await signOut();
+    toast({
+      title: "Logout realizado",
+      description: "Você foi desconectado com sucesso.",
+    });
   };
 
   const renderNavigation = () => {
     if (currentView === "dashboard") {
       return (
         <div className="flex justify-between items-center mb-6">
-          <Button 
-            variant="outline" 
-            onClick={() => setCurrentView("list")}
-            className="flex items-center gap-2"
-          >
-            Ver Todas as Corridas
-          </Button>
+          <div className="flex items-center gap-4">
+            <Button 
+              variant="outline" 
+              onClick={() => setCurrentView("list")}
+            >
+              Ver Todas as Corridas
+            </Button>
+            
+            <div className="flex items-center gap-2 text-sm text-muted-foreground">
+              <User className="w-4 h-4" />
+              <span>{user.email}</span>
+            </div>
+          </div>
           
-          <Button 
-            onClick={handleAddRace}
-            className="running-gradient text-white hover:opacity-90 transition-opacity"
-          >
-            <Plus className="w-4 h-4 mr-2" />
-            Adicionar Corrida
-          </Button>
+          <div className="flex items-center gap-2">
+            <Button 
+              onClick={handleAddRace}
+              className="running-gradient text-white hover:opacity-90 transition-opacity"
+            >
+              <Plus className="w-4 h-4 mr-2" />
+              Adicionar Corrida
+            </Button>
+            
+            <Button 
+              variant="outline"
+              onClick={handleSignOut}
+            >
+              <LogOut className="w-4 h-4 mr-2" />
+              Sair
+            </Button>
+          </div>
         </div>
       );
     }
@@ -107,15 +145,25 @@ const Index = () => {
           Voltar
         </Button>
         
-        {(currentView === "list" || currentView === "details") && (
+        <div className="flex items-center gap-2">
+          {(currentView === "list" || currentView === "details") && (
+            <Button 
+              onClick={handleAddRace}
+              className="running-gradient text-white hover:opacity-90 transition-opacity"
+            >
+              <Plus className="w-4 h-4 mr-2" />
+              Nova Corrida
+            </Button>
+          )}
+          
           <Button 
-            onClick={handleAddRace}
-            className="running-gradient text-white hover:opacity-90 transition-opacity"
+            variant="outline"
+            onClick={handleSignOut}
           >
-            <Plus className="w-4 h-4 mr-2" />
-            Nova Corrida
+            <LogOut className="w-4 h-4 mr-2" />
+            Sair
           </Button>
-        )}
+        </div>
       </div>
     );
   };
