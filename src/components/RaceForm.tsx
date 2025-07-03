@@ -14,13 +14,15 @@ import { Race, RaceFormData } from "@/types/race";
 import { format } from "date-fns";
 import { FileUpload } from "./FileUpload";
 
-const raceFormSchema = z.object({
+const createRaceFormSchema = (toBeDefinedKitPickup: boolean) => z.object({
   name: z.string().min(1, "Nome é obrigatório"),
   status: z.enum(["upcoming", "completed", "interest"]),
   raceDate: z.string().min(1, "Data é obrigatória"),
   startTime: z.string().min(1, "Horário é obrigatório"),
   distance: z.number().min(0.1, "Distância deve ser maior que 0"),
-  kitPickupAddress: z.string().min(1, "Endereço é obrigatório"),
+  kitPickupAddress: toBeDefinedKitPickup 
+    ? z.string().optional()
+    : z.string().min(1, "Endereço é obrigatório"),
   kitPickupDates: z.union([
     z.literal("to-be-defined"),
     z.array(z.object({
@@ -64,7 +66,7 @@ export const RaceForm = ({ race, onSubmit, onCancel }: RaceFormProps) => {
   );
 
   const form = useForm<InternalFormData>({
-    resolver: zodResolver(raceFormSchema),
+    resolver: zodResolver(createRaceFormSchema(toBeDefinedKitPickup)),
     defaultValues: {
       name: race?.name || "",
       status: race?.status || "upcoming",
@@ -107,6 +109,7 @@ export const RaceForm = ({ race, onSubmit, onCancel }: RaceFormProps) => {
       overallPlacement: data.overallPlacement ? Number(data.overallPlacement) : undefined,
       ageGroupPlacement: data.ageGroupPlacement ? Number(data.ageGroupPlacement) : undefined,
       kitPickupDates: toBeDefinedKitPickup ? "to-be-defined" : data.kitPickupDates,
+      kitPickupAddress: toBeDefinedKitPickup ? "" : data.kitPickupAddress,
     };
     onSubmit(processedData);
   };
@@ -116,6 +119,8 @@ export const RaceForm = ({ race, onSubmit, onCancel }: RaceFormProps) => {
     if (checked) {
       // Clear the array when switching to "to-be-defined"
       form.setValue("kitPickupDates", []);
+      // Clear the address when toggling to "to-be-defined"
+      form.setValue("kitPickupAddress", "");
     }
   };
 
@@ -232,20 +237,6 @@ export const RaceForm = ({ race, onSubmit, onCancel }: RaceFormProps) => {
                 )}
               </div>
 
-              <div>
-                <Label htmlFor="kitPickupAddress">Endereço de Retirada do Kit</Label>
-                <Input
-                  id="kitPickupAddress"
-                  {...form.register("kitPickupAddress")}
-                  placeholder="Ex: Shopping Ibirapuera - Piso 2"
-                />
-                {form.formState.errors.kitPickupAddress && (
-                  <p className="text-sm text-red-500 mt-1">
-                    {form.formState.errors.kitPickupAddress.message}
-                  </p>
-                )}
-              </div>
-
               <div className="space-y-4">
                 <div className="flex items-center space-x-2">
                   <Checkbox
@@ -259,58 +250,74 @@ export const RaceForm = ({ race, onSubmit, onCancel }: RaceFormProps) => {
                 </div>
 
                 {!toBeDefinedKitPickup && (
-                  <div className="space-y-4">
-                    <div className="flex justify-between items-center">
-                      <Label>Datas de Retirada do Kit</Label>
-                      <Button
-                        type="button"
-                        variant="outline"
-                        size="sm"
-                        onClick={addKitPickupDate}
-                      >
-                        <Plus className="w-4 h-4 mr-2" />
-                        Adicionar Data
-                      </Button>
+                  <>
+                    <div>
+                      <Label htmlFor="kitPickupAddress">Endereço de Retirada do Kit</Label>
+                      <Input
+                        id="kitPickupAddress"
+                        {...form.register("kitPickupAddress")}
+                        placeholder="Ex: Shopping Ibirapuera - Piso 2"
+                      />
+                      {form.formState.errors.kitPickupAddress && (
+                        <p className="text-sm text-red-500 mt-1">
+                          {form.formState.errors.kitPickupAddress.message}
+                        </p>
+                      )}
                     </div>
 
-                    {fields.map((field, index) => (
-                      <Card key={field.id} className="p-4">
-                        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                          <div>
-                            <Label htmlFor={`kitPickupDates.${index}.date`}>Data</Label>
-                            <Input
-                              type="date"
-                              {...form.register(`kitPickupDates.${index}.date` as const)}
-                            />
-                          </div>
-                          <div>
-                            <Label htmlFor={`kitPickupDates.${index}.startTime`}>Horário Início</Label>
-                            <Input
-                              type="time"
-                              {...form.register(`kitPickupDates.${index}.startTime` as const)}
-                            />
-                          </div>
-                          <div className="flex gap-2 items-end">
-                            <div className="flex-1">
-                              <Label htmlFor={`kitPickupDates.${index}.endTime`}>Horário Fim</Label>
+                    <div className="space-y-4">
+                      <div className="flex justify-between items-center">
+                        <Label>Datas de Retirada do Kit</Label>
+                        <Button
+                          type="button"
+                          variant="outline"
+                          size="sm"
+                          onClick={addKitPickupDate}
+                        >
+                          <Plus className="w-4 h-4 mr-2" />
+                          Adicionar Data
+                        </Button>
+                      </div>
+
+                      {fields.map((field, index) => (
+                        <Card key={field.id} className="p-4">
+                          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                            <div>
+                              <Label htmlFor={`kitPickupDates.${index}.date`}>Data</Label>
                               <Input
-                                type="time"
-                                {...form.register(`kitPickupDates.${index}.endTime` as const)}
+                                type="date"
+                                {...form.register(`kitPickupDates.${index}.date` as const)}
                               />
                             </div>
-                            <Button
-                              type="button"
-                              variant="outline"
-                              size="sm"
-                              onClick={() => removeKitPickupDate(index)}
-                            >
-                              <Trash2 className="w-4 h-4" />
-                            </Button>
+                            <div>
+                              <Label htmlFor={`kitPickupDates.${index}.startTime`}>Horário Início</Label>
+                              <Input
+                                type="time"
+                                {...form.register(`kitPickupDates.${index}.startTime` as const)}
+                              />
+                            </div>
+                            <div className="flex gap-2 items-end">
+                              <div className="flex-1">
+                                <Label htmlFor={`kitPickupDates.${index}.endTime`}>Horário Fim</Label>
+                                <Input
+                                  type="time"
+                                  {...form.register(`kitPickupDates.${index}.endTime` as const)}
+                                />
+                              </div>
+                              <Button
+                                type="button"
+                                variant="outline"
+                                size="sm"
+                                onClick={() => removeKitPickupDate(index)}
+                              >
+                                <Trash2 className="w-4 h-4" />
+                              </Button>
+                            </div>
                           </div>
-                        </div>
-                      </Card>
-                    ))}
-                  </div>
+                        </Card>
+                      ))}
+                    </div>
+                  </>
                 )}
               </div>
 
