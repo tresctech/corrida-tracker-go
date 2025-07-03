@@ -6,7 +6,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { useToast } from "@/hooks/use-toast";
-import { Eye, EyeOff } from "lucide-react";
+import { Eye, EyeOff, AlertCircle } from "lucide-react";
 
 interface AuthPageProps {
   onAuthSuccess: () => void;
@@ -16,10 +16,41 @@ export const AuthPage = ({ onAuthSuccess }: AuthPageProps) => {
   const [isLogin, setIsLogin] = useState(true);
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
   const [fullName, setFullName] = useState("");
   const [loading, setLoading] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const { toast } = useToast();
+
+  const validatePassword = (password: string): { isValid: boolean; errors: string[] } => {
+    const errors: string[] = [];
+    
+    if (password.length < 8) {
+      errors.push("A senha deve ter no mínimo 8 caracteres");
+    }
+    
+    if (!/[A-Z]/.test(password)) {
+      errors.push("A senha deve conter pelo menos uma letra maiúscula");
+    }
+    
+    if (!/[a-z]/.test(password)) {
+      errors.push("A senha deve conter pelo menos uma letra minúscula");
+    }
+    
+    if (!/[0-9]/.test(password)) {
+      errors.push("A senha deve conter pelo menos um número");
+    }
+    
+    if (!/[!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?]/.test(password)) {
+      errors.push("A senha deve conter pelo menos um caractere especial");
+    }
+    
+    return {
+      isValid: errors.length === 0,
+      errors
+    };
+  };
 
   const handleEmailAuth = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -39,6 +70,29 @@ export const AuthPage = ({ onAuthSuccess }: AuthPageProps) => {
           description: "Bem-vindo de volta ao RunTracker.",
         });
       } else {
+        // Validações para cadastro
+        const passwordValidation = validatePassword(password);
+        
+        if (!passwordValidation.isValid) {
+          toast({
+            title: "Senha inválida",
+            description: passwordValidation.errors.join(". "),
+            variant: "destructive",
+          });
+          setLoading(false);
+          return;
+        }
+
+        if (password !== confirmPassword) {
+          toast({
+            title: "Senhas não coincidem",
+            description: "As senhas digitadas devem ser idênticas.",
+            variant: "destructive",
+          });
+          setLoading(false);
+          return;
+        }
+
         const redirectUrl = `${window.location.origin}/`;
         
         const { error } = await supabase.auth.signUp({
@@ -68,6 +122,49 @@ export const AuthPage = ({ onAuthSuccess }: AuthPageProps) => {
     } finally {
       setLoading(false);
     }
+  };
+
+  const getPasswordStrengthIndicator = () => {
+    if (!password || isLogin) return null;
+    
+    const validation = validatePassword(password);
+    const strength = 5 - validation.errors.length;
+    
+    let strengthText = "";
+    let strengthColor = "";
+    
+    if (strength <= 1) {
+      strengthText = "Muito fraca";
+      strengthColor = "text-red-500";
+    } else if (strength <= 2) {
+      strengthText = "Fraca";
+      strengthColor = "text-orange-500";
+    } else if (strength <= 3) {
+      strengthText = "Média";
+      strengthColor = "text-yellow-500";
+    } else if (strength <= 4) {
+      strengthText = "Forte";
+      strengthColor = "text-blue-500";
+    } else {
+      strengthText = "Muito forte";
+      strengthColor = "text-green-500";
+    }
+
+    return (
+      <div className="mt-1 text-xs">
+        <span className={strengthColor}>Força da senha: {strengthText}</span>
+        {validation.errors.length > 0 && (
+          <div className="mt-1 space-y-1">
+            {validation.errors.map((error, index) => (
+              <div key={index} className="flex items-center text-red-500">
+                <AlertCircle className="h-3 w-3 mr-1" />
+                <span>{error}</span>
+              </div>
+            ))}
+          </div>
+        )}
+      </div>
+    );
   };
 
   return (
@@ -134,7 +231,43 @@ export const AuthPage = ({ onAuthSuccess }: AuthPageProps) => {
                   )}
                 </Button>
               </div>
+              {getPasswordStrengthIndicator()}
             </div>
+
+            {!isLogin && (
+              <div className="space-y-2">
+                <Label htmlFor="confirmPassword">Confirmar senha</Label>
+                <div className="relative">
+                  <Input
+                    id="confirmPassword"
+                    type={showConfirmPassword ? "text" : "password"}
+                    value={confirmPassword}
+                    onChange={(e) => setConfirmPassword(e.target.value)}
+                    required={!isLogin}
+                    placeholder="Confirme sua senha"
+                  />
+                  <Button
+                    type="button"
+                    variant="ghost"
+                    size="sm"
+                    className="absolute right-0 top-0 h-full px-3 py-2 hover:bg-transparent"
+                    onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+                  >
+                    {showConfirmPassword ? (
+                      <EyeOff className="h-4 w-4" />
+                    ) : (
+                      <Eye className="h-4 w-4" />
+                    )}
+                  </Button>
+                </div>
+                {!isLogin && confirmPassword && password !== confirmPassword && (
+                  <div className="flex items-center text-red-500 text-xs mt-1">
+                    <AlertCircle className="h-3 w-3 mr-1" />
+                    <span>As senhas não coincidem</span>
+                  </div>
+                )}
+              </div>
+            )}
 
             <Button
               type="submit"
@@ -156,6 +289,7 @@ export const AuthPage = ({ onAuthSuccess }: AuthPageProps) => {
                 setIsLogin(!isLogin);
                 setEmail("");
                 setPassword("");
+                setConfirmPassword("");
                 setFullName("");
               }}
             >
