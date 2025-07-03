@@ -86,6 +86,7 @@ export const useSupabaseRaces = () => {
         registration_proof: raceData.registrationProofUrl ? {
           type: raceData.registrationProofType || 'link',
           url: raceData.registrationProofUrl,
+          name: raceData.registrationProofType === 'file' ? raceData.registrationProofUrl.split('/').pop() : undefined,
         } : null,
         observations: raceData.observations,
         race_results: raceData.status === 'completed' && raceData.completionTime ? {
@@ -164,6 +165,7 @@ export const useSupabaseRaces = () => {
         registration_proof: raceData.registrationProofUrl ? {
           type: raceData.registrationProofType || 'link',
           url: raceData.registrationProofUrl,
+          name: raceData.registrationProofType === 'file' ? raceData.registrationProofUrl.split('/').pop() : undefined,
         } : null,
         observations: raceData.observations,
         race_results: raceData.status === 'completed' && raceData.completionTime ? {

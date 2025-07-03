@@ -12,6 +12,7 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { Plus, Trash2 } from "lucide-react";
 import { Race, RaceFormData } from "@/types/race";
 import { format } from "date-fns";
+import { FileUpload } from "./FileUpload";
 
 const raceFormSchema = z.object({
   name: z.string().min(1, "Nome é obrigatório"),
@@ -58,6 +59,9 @@ export const RaceForm = ({ race, onSubmit, onCancel }: RaceFormProps) => {
   const [toBeDefinedKitPickup, setToBeDefinedKitPickup] = useState(
     race?.kitPickupDates === "to-be-defined"
   );
+  const [proofFileName, setProofFileName] = useState(
+    race?.registrationProof?.name || ""
+  );
 
   const form = useForm<InternalFormData>({
     resolver: zodResolver(raceFormSchema),
@@ -93,6 +97,7 @@ export const RaceForm = ({ race, onSubmit, onCancel }: RaceFormProps) => {
   });
 
   const watchStatus = form.watch("status");
+  const watchProofType = form.watch("registrationProofType");
 
   const handleSubmit = (data: InternalFormData) => {
     // Convert back to RaceFormData format
@@ -126,6 +131,16 @@ export const RaceForm = ({ race, onSubmit, onCancel }: RaceFormProps) => {
 
   const removeKitPickupDate = (index: number) => {
     remove(index);
+  };
+
+  const handleFileUploaded = (url: string, fileName: string) => {
+    form.setValue("registrationProofUrl", url);
+    setProofFileName(fileName);
+  };
+
+  const handleRemoveFile = () => {
+    form.setValue("registrationProofUrl", "");
+    setProofFileName("");
   };
 
   return (
@@ -299,7 +314,7 @@ export const RaceForm = ({ race, onSubmit, onCancel }: RaceFormProps) => {
                 )}
               </div>
 
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div className="space-y-4">
                 <div>
                   <Label htmlFor="registrationProofType">Tipo de Comprovante</Label>
                   <Select
@@ -318,20 +333,29 @@ export const RaceForm = ({ race, onSubmit, onCancel }: RaceFormProps) => {
                   </Select>
                 </div>
 
-                <div>
-                  <Label htmlFor="registrationProofUrl">
-                    {form.watch("registrationProofType") === "file" ? "URL do Arquivo" : "Link"}
-                  </Label>
-                  <Input
-                    id="registrationProofUrl"
-                    {...form.register("registrationProofUrl")}
-                    placeholder={
-                      form.watch("registrationProofType") === "file"
-                        ? "URL do comprovante"
-                        : "Link do comprovante"
+                {watchProofType === "file" ? (
+                  <FileUpload
+                    onFileUploaded={handleFileUploaded}
+                    currentFile={
+                      form.watch("registrationProofUrl") 
+                        ? { 
+                            url: form.watch("registrationProofUrl") || "", 
+                            name: proofFileName 
+                          }
+                        : undefined
                     }
+                    onRemoveFile={handleRemoveFile}
                   />
-                </div>
+                ) : watchProofType === "link" ? (
+                  <div>
+                    <Label htmlFor="registrationProofUrl">Link do Comprovante</Label>
+                    <Input
+                      id="registrationProofUrl"
+                      {...form.register("registrationProofUrl")}
+                      placeholder="Link do comprovante"
+                    />
+                  </div>
+                ) : null}
               </div>
 
               {watchStatus === "completed" && (
