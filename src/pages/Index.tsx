@@ -5,17 +5,18 @@ import { RaceForm } from "@/components/RaceForm";
 import { RaceList } from "@/components/RaceList";
 import { RaceDetails } from "@/components/RaceDetails";
 import { AuthPage } from "@/components/AuthPage";
+import UserManagement from "@/components/UserManagement";
 import { useAuth } from "@/hooks/useAuth";
 import { useSupabaseRaces } from "@/hooks/useSupabaseRaces";
 import { Race, RaceFormData } from "@/types/race";
 import { Button } from "@/components/ui/button";
-import { ArrowLeft, Plus, LogOut, User } from "lucide-react";
+import { ArrowLeft, Plus, LogOut, User, Settings } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 
-type View = "dashboard" | "form" | "list" | "details";
+type View = "dashboard" | "form" | "list" | "details" | "admin";
 
 const Index = () => {
-  const { user, loading: authLoading, signOut } = useAuth();
+  const { user, loading: authLoading, isAdmin, signOut } = useAuth();
   const { races, loading, addRace, updateRace, deleteRace, getStats } = useSupabaseRaces();
   const { toast } = useToast();
   const [currentView, setCurrentView] = useState<View>("dashboard");
@@ -106,10 +107,21 @@ const Index = () => {
             >
               Ver Todas as Corridas
             </Button>
+
+            {isAdmin && (
+              <Button 
+                variant="outline" 
+                onClick={() => setCurrentView("admin")}
+              >
+                <Settings className="w-4 h-4 mr-2" />
+                Administração
+              </Button>
+            )}
             
             <div className="flex items-center gap-2 text-sm text-muted-foreground">
               <User className="w-4 h-4" />
               <span>{user.email}</span>
+              {isAdmin && <span className="text-red-500 font-medium">(Admin)</span>}
             </div>
           </div>
           
@@ -155,6 +167,13 @@ const Index = () => {
               Nova Corrida
             </Button>
           )}
+
+          {currentView === "admin" && isAdmin && (
+            <div className="flex items-center gap-2 text-sm text-muted-foreground">
+              <Settings className="w-4 h-4" />
+              <span>Painel de Administração</span>
+            </div>
+          )}
           
           <Button 
             variant="outline"
@@ -197,6 +216,9 @@ const Index = () => {
             onClose={handleBack}
           />
         ) : null;
+
+      case "admin":
+        return isAdmin ? <UserManagement /> : null;
       
       default:
         return (
