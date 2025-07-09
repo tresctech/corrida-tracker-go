@@ -6,6 +6,7 @@ import { RaceList } from "@/components/RaceList";
 import { RaceDetails } from "@/components/RaceDetails";
 import { AuthPage } from "@/components/AuthPage";
 import UserManagement from "@/components/UserManagement";
+import { ChangePasswordModal } from "@/components/ChangePasswordModal";
 import { useAuth } from "@/hooks/useAuth";
 import { useSupabaseRaces } from "@/hooks/useSupabaseRaces";
 import { Race, RaceFormData } from "@/types/race";
@@ -16,7 +17,7 @@ import { useToast } from "@/hooks/use-toast";
 type View = "dashboard" | "form" | "list" | "details" | "admin";
 
 const Index = () => {
-  const { user, loading: authLoading, isAdmin, signOut } = useAuth();
+  const { user, loading: authLoading, isAdmin, mustChangePassword, signOut } = useAuth();
   const { races, loading, addRace, updateRace, deleteRace, getStats } = useSupabaseRaces();
   const { toast } = useToast();
   const [currentView, setCurrentView] = useState<View>("dashboard");
@@ -91,8 +92,15 @@ const Index = () => {
   const handleSignOut = async () => {
     await signOut();
     toast({
-      title: "Logout realizado",
+      title: "Logout realizado",  
       description: "Você foi desconectado com sucesso.",
+    });
+  };
+
+  const handlePasswordChanged = () => {
+    toast({
+      title: "Senha alterada com sucesso",
+      description: "Sua senha foi alterada e você já pode usar o sistema.",
     });
   };
 
@@ -236,6 +244,11 @@ const Index = () => {
         {renderNavigation()}
         {renderContent()}
       </div>
+      
+      <ChangePasswordModal 
+        isOpen={mustChangePassword} 
+        onPasswordChanged={handlePasswordChanged}
+      />
     </div>
   );
 };
