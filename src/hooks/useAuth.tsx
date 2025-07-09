@@ -8,6 +8,7 @@ interface AuthContextType {
   session: Session | null;
   loading: boolean;
   isAdmin: boolean;
+  mustChangePassword: boolean;
   signOut: () => Promise<void>;
 }
 
@@ -18,6 +19,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   const [session, setSession] = useState<Session | null>(null);
   const [loading, setLoading] = useState(true);
   const [isAdmin, setIsAdmin] = useState(false);
+  const [mustChangePassword, setMustChangePassword] = useState(false);
 
   const checkAdminStatus = async (userId: string) => {
     try {
@@ -34,6 +36,14 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     }
   };
 
+  const checkPasswordChangeRequired = (user: User | null) => {
+    if (user?.user_metadata?.force_password_change) {
+      setMustChangePassword(true);
+    } else {
+      setMustChangePassword(false);
+    }
+  };
+
   useEffect(() => {
     // Set up auth state listener
     const { data: { subscription } } = supabase.auth.onAuthStateChange(
@@ -44,11 +54,13 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
         setLoading(false);
         
         if (session?.user) {
+          checkPasswordChangeRequired(session.user);
           setTimeout(() => {
             checkAdminStatus(session.user.id);
           }, 0);
         } else {
           setIsAdmin(false);
+          setMustChangePassword(false);
         }
       }
     );
@@ -60,6 +72,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
       setLoading(false);
       
       if (session?.user) {
+        checkPasswordChangeRequired(session.user);
         setTimeout(() => {
           checkAdminStatus(session.user.id);
         }, 0);
@@ -75,10 +88,11 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
       console.error('Error signing out:', error);
     }
     setIsAdmin(false);
+    setMustChangePassword(false);
   };
 
   return (
-    <AuthContext.Provider value={{ user, session, loading, isAdmin, signOut }}>
+    <AuthContext.Provider value={{ user, session, loading, isAdmin, mustChangePassword, signOut }}>
       {children}
     </AuthContext.Provider>
   );
