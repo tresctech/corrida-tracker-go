@@ -120,16 +120,14 @@ export const useUserManagement = () => {
 
   const deleteUser = async (userId: string) => {
     try {
-      const { error } = await supabase
-        .from('profiles')
-        .delete()
-        .eq('id', userId);
+      // Usar a API administrativa do Supabase para remover completamente o usuário
+      const { error } = await supabase.auth.admin.deleteUser(userId);
 
       if (error) throw error;
 
       toast({
         title: 'Usuário removido',
-        description: 'Usuário removido com sucesso.',
+        description: 'Usuário removido completamente do sistema.',
       });
 
       await loadUsers(); // Recarregar lista
@@ -137,7 +135,7 @@ export const useUserManagement = () => {
       console.error('Error deleting user:', error);
       toast({
         title: 'Erro ao remover usuário',
-        description: 'Não foi possível remover o usuário.',
+        description: 'Não foi possível remover o usuário do sistema.',
         variant: 'destructive',
       });
     }
