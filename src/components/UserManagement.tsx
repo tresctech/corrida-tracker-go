@@ -8,7 +8,7 @@ import { Trash2, UserPlus, Shield, User } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 
 const UserManagement = () => {
-  const { users, loading, assignRole, removeRole } = useUserManagement();
+  const { users, loading, assignRole, removeRole, deleteUser } = useUserManagement();
   const { toast } = useToast();
   const [selectedUser, setSelectedUser] = useState<UserProfile | null>(null);
   const [roleAction, setRoleAction] = useState<'assign' | 'remove'>('assign');
@@ -187,6 +187,45 @@ const UserManagement = () => {
                       </AlertDialogContent>
                     </AlertDialog>
                   )}
+
+                  {/* Botão para remover usuário */}
+                  <AlertDialog>
+                    <AlertDialogTrigger asChild>
+                      <Button 
+                        variant="destructive" 
+                        size="sm"
+                        onClick={() => {
+                          setSelectedUser(user);
+                        }}
+                      >
+                        <Trash2 className="w-4 h-4 mr-1" />
+                        Remover Usuário
+                      </Button>
+                    </AlertDialogTrigger>
+                    <AlertDialogContent>
+                      <AlertDialogHeader>
+                        <AlertDialogTitle>Confirmar Remoção de Usuário</AlertDialogTitle>
+                        <AlertDialogDescription>
+                          Deseja remover permanentemente o usuário <strong>{user.full_name || user.email}</strong>?
+                          Esta ação não pode ser desfeita e todos os dados do usuário serão perdidos.
+                        </AlertDialogDescription>
+                      </AlertDialogHeader>
+                      <AlertDialogFooter>
+                        <AlertDialogCancel>Cancelar</AlertDialogCancel>
+                        <AlertDialogAction 
+                          onClick={async () => {
+                            if (selectedUser) {
+                              await deleteUser(selectedUser.id);
+                              setSelectedUser(null);
+                            }
+                          }}
+                          className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+                        >
+                          Remover Usuário
+                        </AlertDialogAction>
+                      </AlertDialogFooter>
+                    </AlertDialogContent>
+                  </AlertDialog>
                 </div>
               </div>
             </CardContent>

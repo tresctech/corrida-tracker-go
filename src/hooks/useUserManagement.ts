@@ -118,6 +118,31 @@ export const useUserManagement = () => {
     }
   };
 
+  const deleteUser = async (userId: string) => {
+    try {
+      const { error } = await supabase
+        .from('profiles')
+        .delete()
+        .eq('id', userId);
+
+      if (error) throw error;
+
+      toast({
+        title: 'Usuário removido',
+        description: 'Usuário removido com sucesso.',
+      });
+
+      await loadUsers(); // Recarregar lista
+    } catch (error) {
+      console.error('Error deleting user:', error);
+      toast({
+        title: 'Erro ao remover usuário',
+        description: 'Não foi possível remover o usuário.',
+        variant: 'destructive',
+      });
+    }
+  };
+
   useEffect(() => {
     loadUsers();
   }, []);
@@ -127,6 +152,7 @@ export const useUserManagement = () => {
     loading,
     assignRole,
     removeRole,
+    deleteUser,
     refreshUsers: loadUsers,
   };
 };
