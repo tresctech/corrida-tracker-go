@@ -1,11 +1,14 @@
+
 import { useState } from 'react';
 import { useUserManagement, UserProfile } from '@/hooks/useUserManagement';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from '@/components/ui/alert-dialog';
-import { Trash2, UserPlus, Shield, User } from 'lucide-react';
+import { Alert, AlertDescription } from '@/components/ui/alert';
+import { Trash2, UserPlus, Shield, User, AlertTriangle } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
+import { logSecurityEvent } from '@/utils/security';
 
 const UserManagement = () => {
   const { users, loading, assignRole, removeRole, deleteUser } = useUserManagement();
@@ -28,13 +31,48 @@ const UserManagement = () => {
   const handleRoleAction = async () => {
     if (!selectedUser) return;
 
-    if (roleAction === 'assign') {
-      await assignRole(selectedUser.id, targetRole);
-    } else {
-      await removeRole(selectedUser.id, targetRole);
+    try {
+      if (roleAction === 'assign') {
+        await assignRole(selectedUser.id, targetRole);
+        await logSecurityEvent('role_assigned', {
+          targetUserId: selectedUser.id,
+          targetEmail: selectedUser.email,
+          role: targetRole
+        });
+      } else {
+        await removeRole(selectedUser.id, targetRole);
+        await logSecurityEvent('role_removed', {
+          targetUserId: selectedUser.id,
+          targetEmail: selectedUser.email,
+          role: targetRole
+        });
+      }
+    } catch (error) {
+      await logSecurityEvent('role_action_failed', {
+        targetUserId: selectedUser.id,
+        action: roleAction,
+        role: targetRole,
+        error: error instanceof Error ? error.message : 'Unknown error'
+      });
     }
 
     setSelectedUser(null);
+  };
+
+  const handleDeleteUser = async (user: UserProfile) => {
+    try {
+      await deleteUser(user.id);
+      await logSecurityEvent('user_deleted', {
+        targetUserId: user.id,
+        targetEmail: user.email
+      });
+    } catch (error) {
+      await logSecurityEvent('user_deletion_failed', {
+        targetUserId: user.id,
+        targetEmail: user.email,
+        error: error instanceof Error ? error.message : 'Unknown error'
+      });
+    }
   };
 
   const hasRole = (user: UserProfile, role: string) => {
@@ -58,6 +96,14 @@ const UserManagement = () => {
           Total: {users.length} usuários
         </div>
       </div>
+
+      <Alert>
+        <AlertTriangle className="h-4 w-4" />
+        <AlertDescription>
+          <strong>Aviso de Segurança:</strong> Todas as ações administrativas são registradas 
+          em logs de auditoria. Utilize essas funcionalidades com responsabilidade.
+        </AlertDescription>
+      </Alert>
 
       <div className="grid gap-4">
         {users.map((user) => (
@@ -120,10 +166,16 @@ const UserManagement = () => {
                       </AlertDialogTrigger>
                       <AlertDialogContent>
                         <AlertDialogHeader>
-                          <AlertDialogTitle>Confirmar Atribuição</AlertDialogTitle>
-                          <AlertDialogDescription>
-                            Deseja tornar <strong>{user.full_name || user.email}</strong> um administrador?
-                            Administradores têm acesso total ao sistema.
+                          <AlertDialogTitle>Confirmar Atribuição de Admin</AlertDialogTitle>
+                          <AlertDialogDescription className="space-y-2">
+                            <p>Deseja tornar <strong>{user.full_name || user.email}</strong> um administrador?</p>
+                            <p className="text-orange-600 font-medium">
+                              ⚠️ Administradores têm acesso total ao sistema, incluindo 
+                              gerenciamento de usuários e dados sensíveis.
+                            </p>
+                            <p className="text-sm text-muted-foreground">
+                              Esta ação será registrada nos logs de auditoria.
+                            </p>
                           </AlertDialogDescription>
                         </AlertDialogHeader>
                         <AlertDialogFooter>
@@ -143,6 +195,11 @@ const UserManagement = () => {
                       size="sm"
                       onClick={async () => {
                         await assignRole(user.id, 'user');
+                        await logSecurityEvent('role_assigned', {
+                          targetUserId: user.id,
+                          targetEmail: user.email,
+                          role: 'user'
+                        });
                       }}
                     >
                       <UserPlus className="w-4 h-4 mr-1" />
@@ -169,10 +226,12 @@ const UserManagement = () => {
                       </AlertDialogTrigger>
                       <AlertDialogContent>
                         <AlertDialogHeader>
-                          <AlertDialogTitle>Confirmar Remoção</AlertDialogTitle>
-                          <AlertDialogDescription>
-                            Deseja remover privilégios de administrador de <strong>{user.full_name || user.email}</strong>?
-                            Esta ação não pode ser desfeita automaticamente.
+                          <AlertDialogTitle>Confirmar Remoção de Admin</AlertDialogTitle>
+                          <AlertDialogDescription className="space-y-2">
+                            <p>Deseja remover privilégios de administrador de <strong>{user.full_name || user.email}</strong>?</p>
+                            <p className="text-sm text-muted-foreground">
+                              Esta ação será registrada nos logs de auditoria e não pode ser desfeita automaticamente.
+                            </p>
                           </AlertDialogDescription>
                         </AlertDialogHeader>
                         <AlertDialogFooter>
@@ -204,10 +263,17 @@ const UserManagement = () => {
                     </AlertDialogTrigger>
                     <AlertDialogContent>
                       <AlertDialogHeader>
-                        <AlertDialogTitle>Confirmar Remoção de Usuário</AlertDialogTitle>
-                        <AlertDialogDescription>
-                          Deseja remover permanentemente o usuário <strong>{user.full_name || user.email}</strong>?
-                          Esta ação não pode ser desfeita e todos os dados do usuário serão perdidos.
+                        <AlertDialogTitle>Confirmar Remoção Permanente</AlertDialogTitle>
+                        <AlertDialogDescription className="space-y-2">
+                          <p>Deseja remover permanentemente o usuário <strong>{user.full_name || user.email}</strong>?</p>
+                          <div className="bg-red-50 border border-red-200 rounded-lg p-3">
+                            <p className="text-red-800 font-medium text-sm">
+                              ⚠️ <strong>AÇÃO IRREVERSÍVEL:</strong> Todos os dados do usuário serão perdidos permanentemente.
+                            </p>
+                          </div>
+                          <p className="text-sm text-muted-foreground">
+                            Esta ação será registrada nos logs de auditoria.
+                          </p>
                         </AlertDialogDescription>
                       </AlertDialogHeader>
                       <AlertDialogFooter>
@@ -215,13 +281,13 @@ const UserManagement = () => {
                         <AlertDialogAction 
                           onClick={async () => {
                             if (selectedUser) {
-                              await deleteUser(selectedUser.id);
+                              await handleDeleteUser(selectedUser);
                               setSelectedUser(null);
                             }
                           }}
                           className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
                         >
-                          Remover Usuário
+                          Remover Permanentemente
                         </AlertDialogAction>
                       </AlertDialogFooter>
                     </AlertDialogContent>

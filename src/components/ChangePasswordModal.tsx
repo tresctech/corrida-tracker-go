@@ -1,3 +1,4 @@
+
 import { useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
@@ -5,7 +6,9 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { useToast } from "@/hooks/use-toast";
-import { Eye, EyeOff, AlertCircle } from "lucide-react";
+import { Eye, EyeOff, AlertCircle, Shield } from "lucide-react";
+import { validatePassword, logSecurityEvent } from "@/utils/security";
+import { Alert, AlertDescription } from "@/components/ui/alert";
 
 interface ChangePasswordModalProps {
   isOpen: boolean;
@@ -19,35 +22,6 @@ export const ChangePasswordModal = ({ isOpen, onPasswordChanged }: ChangePasswor
   const [showNewPassword, setShowNewPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const { toast } = useToast();
-
-  const validatePassword = (password: string): { isValid: boolean; errors: string[] } => {
-    const errors: string[] = [];
-    
-    if (password.length < 8) {
-      errors.push("A senha deve ter no mínimo 8 caracteres");
-    }
-    
-    if (!/[A-Z]/.test(password)) {
-      errors.push("A senha deve conter pelo menos uma letra maiúscula");
-    }
-    
-    if (!/[a-z]/.test(password)) {
-      errors.push("A senha deve conter pelo menos uma letra minúscula");
-    }
-    
-    if (!/[0-9]/.test(password)) {
-      errors.push("A senha deve conter pelo menos um número");
-    }
-    
-    if (!/[!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?]/.test(password)) {
-      errors.push("A senha deve conter pelo menos um caractere especial");
-    }
-    
-    return {
-      isValid: errors.length === 0,
-      errors
-    };
-  };
 
   const getPasswordStrengthIndicator = () => {
     if (!newPassword) return null;
@@ -101,6 +75,10 @@ export const ChangePasswordModal = ({ isOpen, onPasswordChanged }: ChangePasswor
       const passwordValidation = validatePassword(newPassword);
       
       if (!passwordValidation.isValid) {
+        await logSecurityEvent('password_change_failed_validation', {
+          errors: passwordValidation.errors
+        });
+        
         toast({
           title: "Senha inválida",
           description: passwordValidation.errors.join(". "),
@@ -111,6 +89,8 @@ export const ChangePasswordModal = ({ isOpen, onPasswordChanged }: ChangePasswor
       }
 
       if (newPassword !== confirmPassword) {
+        await logSecurityEvent('password_change_failed_mismatch');
+        
         toast({
           title: "Senhas não coincidem",
           description: "As senhas digitadas devem ser idênticas.",
@@ -138,13 +118,23 @@ export const ChangePasswordModal = ({ isOpen, onPasswordChanged }: ChangePasswor
         console.error("Erro ao atualizar metadata:", updateMetadataError);
       }
 
+      await logSecurityEvent('password_changed_successfully');
+
       toast({
         title: "Senha alterada com sucesso!",
         description: "Sua senha foi atualizada e agora você pode usar o sistema normalmente.",
       });
 
+      // Clear form
+      setNewPassword("");
+      setConfirmPassword("");
+      
       onPasswordChanged();
     } catch (error: any) {
+      await logSecurityEvent('password_change_error', {
+        error: error.message
+      });
+      
       toast({
         title: "Erro ao alterar senha",
         description: error.message,
@@ -165,11 +155,12 @@ export const ChangePasswordModal = ({ isOpen, onPasswordChanged }: ChangePasswor
         </DialogHeader>
         
         <div className="space-y-4">
-          <div className="bg-orange-50 border border-orange-200 rounded-lg p-4">
-            <p className="text-sm text-orange-800">
+          <Alert>
+            <Shield className="h-4 w-4" />
+            <AlertDescription>
               Por motivos de segurança, você deve alterar sua senha temporária antes de continuar usando o sistema.
-            </p>
-          </div>
+            </AlertDescription>
+          </Alert>
 
           <form onSubmit={handleChangePassword} className="space-y-4">
             <div className="space-y-2">
@@ -182,6 +173,7 @@ export const ChangePasswordModal = ({ isOpen, onPasswordChanged }: ChangePasswor
                   onChange={(e) => setNewPassword(e.target.value)}
                   required
                   placeholder="Digite sua nova senha"
+                  maxLength={128}
                 />
                 <Button
                   type="button"
@@ -210,6 +202,7 @@ export const ChangePasswordModal = ({ isOpen, onPasswordChanged }: ChangePasswor
                   onChange={(e) => setConfirmPassword(e.target.value)}
                   required
                   placeholder="Confirme sua nova senha"
+                  maxLength={128}
                 />
                 <Button
                   type="button"
@@ -236,7 +229,7 @@ export const ChangePasswordModal = ({ isOpen, onPasswordChanged }: ChangePasswor
             <Button
               type="submit"
               className="w-full running-gradient text-white"
-              disabled={loading}
+              disabled={loading || !newPassword || !confirmPassword}
             >
               {loading ? "Alterando..." : "Alterar Senha"}
             </Button>
