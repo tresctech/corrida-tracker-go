@@ -4,59 +4,16 @@ import { supabase } from "@/integrations/supabase/client";
 // Rate limiting for password resets
 export const checkPasswordResetRateLimit = async (email: string): Promise<{ allowed: boolean; remainingTime?: number }> => {
   try {
-    const { data, error } = await supabase
-      .from('password_reset_attempts')
-      .select('*')
-      .eq('email', email.toLowerCase())
-      .single();
+    const { data, error } = await supabase.functions.invoke('security-helpers', {
+      body: { action: 'check_rate_limit', email }
+    });
 
-    if (error && error.code !== 'PGRST116') { // PGRST116 = no rows found
+    if (error) {
       console.error('Error checking rate limit:', error);
       return { allowed: true }; // Allow on error to not block legitimate users
     }
 
-    if (!data) {
-      return { allowed: true };
-    }
-
-    const now = new Date();
-    const lastAttempt = new Date(data.last_attempt);
-    const blockedUntil = data.blocked_until ? new Date(data.blocked_until) : null;
-
-    // Check if still blocked
-    if (blockedUntil && now < blockedUntil) {
-      const remainingTime = Math.ceil((blockedUntil.getTime() - now.getTime()) / (1000 * 60)); // minutes
-      return { allowed: false, remainingTime };
-    }
-
-    // Reset counter if more than 1 hour has passed
-    const oneHourAgo = new Date(now.getTime() - 60 * 60 * 1000);
-    if (lastAttempt < oneHourAgo) {
-      await supabase
-        .from('password_reset_attempts')
-        .upsert({
-          email: email.toLowerCase(),
-          attempt_count: 1,
-          last_attempt: now.toISOString(),
-          blocked_until: null
-        });
-      return { allowed: true };
-    }
-
-    // Check if exceeded limit (3 attempts per hour)
-    if (data.attempt_count >= 3) {
-      const blockUntil = new Date(now.getTime() + 60 * 60 * 1000); // Block for 1 hour
-      await supabase
-        .from('password_reset_attempts')
-        .update({
-          blocked_until: blockUntil.toISOString()
-        })
-        .eq('email', email.toLowerCase());
-      
-      return { allowed: false, remainingTime: 60 };
-    }
-
-    return { allowed: true };
+    return data || { allowed: true };
   } catch (error) {
     console.error('Error in rate limiting:', error);
     return { allowed: true }; // Allow on error
@@ -65,22 +22,9 @@ export const checkPasswordResetRateLimit = async (email: string): Promise<{ allo
 
 export const recordPasswordResetAttempt = async (email: string) => {
   try {
-    const { data } = await supabase
-      .from('password_reset_attempts')
-      .select('attempt_count')
-      .eq('email', email.toLowerCase())
-      .single();
-
-    const newCount = (data?.attempt_count || 0) + 1;
-    
-    await supabase
-      .from('password_reset_attempts')
-      .upsert({
-        email: email.toLowerCase(),
-        attempt_count: newCount,
-        last_attempt: new Date().toISOString(),
-        blocked_until: null
-      });
+    await supabase.functions.invoke('security-helpers', {
+      body: { action: 'record_attempt', email }
+    });
   } catch (error) {
     console.error('Error recording password reset attempt:', error);
   }
@@ -137,14 +81,16 @@ export const logSecurityEvent = async (action: string, details?: any) => {
   try {
     const { data: { user } } = await supabase.auth.getUser();
     
-    await supabase
-      .from('security_audit_log')
-      .insert({
+    await supabase.functions.invoke('security-helpers', {
+      body: {
+        action: 'log_security_event',
         user_id: user?.id || null,
-        action,
+        action: action,
         details: details || {},
-        created_at: new Date().toISOString()
-      });
+        ip_address: null, // Could be enhanced to get real IP
+        user_agent: navigator.userAgent
+      }
+    });
   } catch (error) {
     // Fail silently for logging to not break user experience
     console.error('Security logging failed:', error);
