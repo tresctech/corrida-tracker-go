@@ -131,7 +131,7 @@ async function logSecurityEvent(supabase: any, params: any) {
     .from('security_audit_log')
     .insert({
       user_id: params.user_id,
-      action: params.action,
+      action: params.event_action,
       details: params.details || {},
       ip_address: params.ip_address,
       user_agent: params.user_agent,
