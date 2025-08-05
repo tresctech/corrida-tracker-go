@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -125,7 +124,7 @@ export const AuthPage = ({ onAuthSuccess }: AuthPageProps) => {
 
         toast({
           title: "Login realizado com sucesso!",
-          description: "Bem-vindo de volta ao RunTracker.",
+          description: "Bem-vindo de volta ao PulseRun.",
         });
       } else {
         // Validações para cadastro
@@ -230,7 +229,7 @@ export const AuthPage = ({ onAuthSuccess }: AuthPageProps) => {
       <Card className="w-full max-w-md">
         <CardHeader className="text-center">
           <CardTitle className="text-2xl font-bold bg-gradient-to-r from-blue-600 to-green-600 bg-clip-text text-transparent">
-            RunTracker
+            PulseRun
           </CardTitle>
           <p className="text-muted-foreground">
             {isForgotPassword 
