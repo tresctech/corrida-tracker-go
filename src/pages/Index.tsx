@@ -28,7 +28,7 @@ const Index = () => {
       <div className="min-h-screen flex items-center justify-center">
         <div className="text-center">
           <div className="w-8 h-8 border-4 border-blue-500 border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
-          <p className="text-muted-foreground">Carregando...</p>
+          <p className="text-muted-foreground">Carregando PulseRun...</p>
         </div>
       </div>
     );
@@ -109,6 +109,8 @@ const Index = () => {
       return (
         <div className="flex justify-between items-center mb-6">
           <div className="flex items-center gap-4">
+            <h1 className="text-2xl font-bold text-gray-800">PulseRun</h1>
+            
             <Button 
               variant="outline" 
               onClick={() => setCurrentView("list")}
@@ -156,14 +158,18 @@ const Index = () => {
 
     return (
       <div className="flex justify-between items-center mb-6">
-        <Button 
-          variant="outline" 
-          onClick={handleBack}
-          className="flex items-center gap-2"
-        >
-          <ArrowLeft className="w-4 h-4" />
-          Voltar
-        </Button>
+        <div className="flex items-center gap-4">
+          <Button 
+            variant="outline" 
+            onClick={handleBack}
+            className="flex items-center gap-2"
+          >
+            <ArrowLeft className="w-4 h-4" />
+            Voltar
+          </Button>
+          
+          <h1 className="text-xl font-bold text-gray-800">PulseRun</h1>
+        </div>
         
         <div className="flex items-center gap-2">
           {(currentView === "list" || currentView === "details") && (
