@@ -235,7 +235,7 @@ export const AuthPage = ({ onAuthSuccess }: AuthPageProps) => {
         backgroundRepeat: 'no-repeat'
       }}
     >
-      <Card className="w-full max-w-md backdrop-blur-sm bg-white/95 shadow-2xl">
+      <Card className="w-full max-w-md backdrop-blur-sm bg-white/80 shadow-2xl">
         <CardHeader className="text-center">
           <CardTitle className="text-2xl font-bold bg-gradient-to-r from-blue-600 to-green-600 bg-clip-text text-transparent">
             PulseRun
