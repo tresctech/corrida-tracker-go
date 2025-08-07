@@ -16,12 +16,23 @@ export const useSubscription = () => {
     subscription_end: null,
   });
   const [loading, setLoading] = useState(true);
-  const { user, session } = useAuth();
+  const { user, session, isAdmin } = useAuth();
   const { toast } = useToast();
 
   const checkSubscription = async () => {
     if (!user || !session) {
       setSubscriptionInfo({ subscribed: false, subscription_tier: null, subscription_end: null });
+      setLoading(false);
+      return;
+    }
+
+    // Admins têm acesso automático ao premium
+    if (isAdmin) {
+      setSubscriptionInfo({ 
+        subscribed: true, 
+        subscription_tier: "Premium", 
+        subscription_end: null 
+      });
       setLoading(false);
       return;
     }
@@ -147,7 +158,7 @@ export const useSubscription = () => {
 
   useEffect(() => {
     checkSubscription();
-  }, [user, session]);
+  }, [user, session, isAdmin]);
 
   return {
     ...subscriptionInfo,
