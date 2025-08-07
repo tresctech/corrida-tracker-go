@@ -1,7 +1,8 @@
 import { Button } from "@/components/ui/button";
 import { ArrowLeft, Download, Printer } from "lucide-react";
 import { useNavigate } from "react-router-dom";
-import flyerImage from "@/assets/pulserun-flyer.jpg";
+import flyerImage from "@/assets/pulserun-flyer-with-logo.jpg";
+import logoImage from "@/assets/pulserun-logo.png";
 
 const Flyer = () => {
   const navigate = useNavigate();
@@ -13,7 +14,7 @@ const Flyer = () => {
   const handleDownload = () => {
     const link = document.createElement('a');
     link.href = flyerImage;
-    link.download = 'pulserun-folder-promocional.jpg';
+    link.download = 'pulserun-folder-promocional-oficial.jpg';
     document.body.appendChild(link);
     link.click();
     document.body.removeChild(link);
@@ -34,7 +35,10 @@ const Flyer = () => {
               Voltar ao Dashboard
             </Button>
             
-            <h1 className="text-2xl font-bold text-gray-800">Folder Promocional</h1>
+            <div className="flex items-center gap-3">
+              <img src={logoImage} alt="PulseRun" className="h-8 w-8" />
+              <h1 className="text-2xl font-bold text-gray-800">Folder Promocional</h1>
+            </div>
           </div>
           
           <div className="flex items-center gap-2">

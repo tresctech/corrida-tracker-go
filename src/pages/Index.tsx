@@ -14,6 +14,7 @@ import { Button } from "@/components/ui/button";
 import { ArrowLeft, Plus, LogOut, User, Settings, FileText } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { useToast } from "@/hooks/use-toast";
+import logoImage from "@/assets/pulserun-logo.png";
 
 type View = "dashboard" | "form" | "list" | "details" | "admin";
 
@@ -111,7 +112,10 @@ const Index = () => {
       return (
         <div className="flex justify-between items-center mb-6">
           <div className="flex items-center gap-4">
-            <h1 className="text-2xl font-bold text-gray-800">PulseRun</h1>
+            <div className="flex items-center gap-3">
+              <img src={logoImage} alt="PulseRun" className="h-10 w-10" />
+              <h1 className="text-2xl font-bold text-gray-800">PulseRun</h1>
+            </div>
             
             <Button 
               variant="outline" 
@@ -178,7 +182,10 @@ const Index = () => {
             Voltar
           </Button>
           
-          <h1 className="text-xl font-bold text-gray-800">PulseRun</h1>
+          <div className="flex items-center gap-3">
+            <img src={logoImage} alt="PulseRun" className="h-8 w-8" />
+            <h1 className="text-xl font-bold text-gray-800">PulseRun</h1>
+          </div>
         </div>
         
         <div className="flex items-center gap-2">
