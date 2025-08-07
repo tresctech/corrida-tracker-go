@@ -14,6 +14,42 @@ export type Database = {
   }
   public: {
     Tables: {
+      personal_workouts: {
+        Row: {
+          created_at: string
+          id: string
+          notes: string | null
+          student_email: string
+          student_name: string
+          trainer_id: string
+          updated_at: string
+          workout_name: string
+          workout_plan: Json
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          notes?: string | null
+          student_email: string
+          student_name: string
+          trainer_id: string
+          updated_at?: string
+          workout_name: string
+          workout_plan: Json
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          notes?: string | null
+          student_email?: string
+          student_name?: string
+          trainer_id?: string
+          updated_at?: string
+          workout_name?: string
+          workout_plan?: Json
+        }
+        Relationships: []
+      }
       profiles: {
         Row: {
           created_at: string
@@ -89,6 +125,42 @@ export type Database = {
         }
         Relationships: []
       }
+      subscribers: {
+        Row: {
+          created_at: string
+          email: string
+          id: string
+          stripe_customer_id: string | null
+          subscribed: boolean
+          subscription_end: string | null
+          subscription_tier: string | null
+          updated_at: string
+          user_id: string | null
+        }
+        Insert: {
+          created_at?: string
+          email: string
+          id?: string
+          stripe_customer_id?: string | null
+          subscribed?: boolean
+          subscription_end?: string | null
+          subscription_tier?: string | null
+          updated_at?: string
+          user_id?: string | null
+        }
+        Update: {
+          created_at?: string
+          email?: string
+          id?: string
+          stripe_customer_id?: string | null
+          subscribed?: boolean
+          subscription_end?: string | null
+          subscription_tier?: string | null
+          updated_at?: string
+          user_id?: string | null
+        }
+        Relationships: []
+      }
       user_roles: {
         Row: {
           created_at: string
@@ -115,6 +187,10 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
+      has_active_subscription: {
+        Args: Record<PropertyKey, never>
+        Returns: boolean
+      }
       has_role: {
         Args: {
           _user_id: string
