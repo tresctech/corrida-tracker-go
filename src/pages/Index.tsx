@@ -11,7 +11,7 @@ import { useAuth } from "@/hooks/useAuth";
 import { useSupabaseRaces } from "@/hooks/useSupabaseRaces";
 import { Race, RaceFormData } from "@/types/race";
 import { Button } from "@/components/ui/button";
-import { ArrowLeft, Plus, LogOut, User, Settings, Crown } from "lucide-react";
+import { ArrowLeft, Plus, LogOut, User, Settings, Crown, Download } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { useToast } from "@/hooks/use-toast";
 import { PersonalTrainer } from "@/components/PersonalTrainer";
@@ -154,6 +154,17 @@ const Index = () => {
             >
               <Plus className="w-4 h-4 mr-2" />
               Adicionar Corrida
+            </Button>
+
+            <Button asChild className="running-gradient text-white hover:opacity-90 transition-opacity">
+              <a href="/pulserun-flyer-promocional.jpg" download>
+                <Download className="w-4 h-4 mr-2" />
+                Baixar Flyer
+              </a>
+            </Button>
+
+            <Button variant="outline" asChild>
+              <a href="/flyer-promocional">Ver Flyer</a>
             </Button>
             
             <Button 
