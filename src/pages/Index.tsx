@@ -11,12 +11,14 @@ import { useAuth } from "@/hooks/useAuth";
 import { useSupabaseRaces } from "@/hooks/useSupabaseRaces";
 import { Race, RaceFormData } from "@/types/race";
 import { Button } from "@/components/ui/button";
-import { ArrowLeft, Plus, LogOut, User, Settings } from "lucide-react";
+import { ArrowLeft, Plus, LogOut, User, Settings, FileText } from "lucide-react";
+import { useNavigate } from "react-router-dom";
 import { useToast } from "@/hooks/use-toast";
 
 type View = "dashboard" | "form" | "list" | "details" | "admin";
 
 const Index = () => {
+  const navigate = useNavigate();
   const { user, loading: authLoading, isAdmin, mustChangePassword, signOut } = useAuth();
   const { races, loading, addRace, updateRace, deleteRace, getStats } = useSupabaseRaces();
   const { toast } = useToast();
@@ -116,6 +118,14 @@ const Index = () => {
               onClick={() => setCurrentView("list")}
             >
               Ver Todas as Corridas
+            </Button>
+
+            <Button 
+              variant="outline" 
+              onClick={() => navigate("/folder")}
+            >
+              <FileText className="w-4 h-4 mr-2" />
+              Folder Promocional
             </Button>
 
             {isAdmin && (
