@@ -11,10 +11,9 @@ import { useAuth } from "@/hooks/useAuth";
 import { useSupabaseRaces } from "@/hooks/useSupabaseRaces";
 import { Race, RaceFormData } from "@/types/race";
 import { Button } from "@/components/ui/button";
-import { ArrowLeft, Plus, LogOut, User, Settings, FileText } from "lucide-react";
+import { ArrowLeft, Plus, LogOut, User, Settings } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { useToast } from "@/hooks/use-toast";
-import logoImage from "@/assets/pulserun-logo.png";
 
 type View = "dashboard" | "form" | "list" | "details" | "admin";
 
@@ -112,24 +111,13 @@ const Index = () => {
       return (
         <div className="flex justify-between items-center mb-6">
           <div className="flex items-center gap-4">
-            <div className="flex items-center gap-3">
-              <img src={logoImage} alt="PulseRun" className="h-10 w-10" />
-              <h1 className="text-2xl font-bold text-gray-800">PulseRun</h1>
-            </div>
+            <h1 className="text-2xl font-bold text-gray-800">PulseRun</h1>
             
             <Button 
               variant="outline" 
               onClick={() => setCurrentView("list")}
             >
               Ver Todas as Corridas
-            </Button>
-
-            <Button 
-              variant="outline" 
-              onClick={() => navigate("/folder")}
-            >
-              <FileText className="w-4 h-4 mr-2" />
-              Folder Promocional
             </Button>
 
             {isAdmin && (
@@ -182,10 +170,7 @@ const Index = () => {
             Voltar
           </Button>
           
-          <div className="flex items-center gap-3">
-            <img src={logoImage} alt="PulseRun" className="h-8 w-8" />
-            <h1 className="text-xl font-bold text-gray-800">PulseRun</h1>
-          </div>
+          <h1 className="text-xl font-bold text-gray-800">PulseRun</h1>
         </div>
         
         <div className="flex items-center gap-2">
