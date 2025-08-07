@@ -11,11 +11,12 @@ import { useAuth } from "@/hooks/useAuth";
 import { useSupabaseRaces } from "@/hooks/useSupabaseRaces";
 import { Race, RaceFormData } from "@/types/race";
 import { Button } from "@/components/ui/button";
-import { ArrowLeft, Plus, LogOut, User, Settings } from "lucide-react";
+import { ArrowLeft, Plus, LogOut, User, Settings, Crown } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { useToast } from "@/hooks/use-toast";
+import { PersonalTrainer } from "@/components/PersonalTrainer";
 
-type View = "dashboard" | "form" | "list" | "details" | "admin";
+type View = "dashboard" | "form" | "list" | "details" | "admin" | "personal";
 
 const Index = () => {
   const navigate = useNavigate();
@@ -118,6 +119,15 @@ const Index = () => {
               onClick={() => setCurrentView("list")}
             >
               Ver Todas as Corridas
+            </Button>
+
+            <Button 
+              variant="outline" 
+              onClick={() => setCurrentView("personal")}
+              className="bg-gradient-to-r from-amber-50 to-orange-50 border-amber-200 text-amber-800 hover:from-amber-100 hover:to-orange-100"
+            >
+              <Crown className="w-4 h-4 mr-2" />
+              Personal Trainer
             </Button>
 
             {isAdmin && (
@@ -235,6 +245,9 @@ const Index = () => {
 
       case "admin":
         return isAdmin ? <UserManagement /> : null;
+      
+      case "personal":
+        return <PersonalTrainer onBack={() => setCurrentView("dashboard")} />;
       
       default:
         return (
