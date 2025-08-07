@@ -164,14 +164,24 @@ export const AuthPage = ({ onAuthSuccess }: AuthPageProps) => {
           }
         });
 
-        if (error) throw error;
+        if (error) {
+          // Verificar se é erro de usuário duplicado
+          if (error.message.includes('User already registered') || 
+              error.message.includes('already been registered') ||
+              error.message.includes('duplicate key value violates unique constraint') ||
+              error.status === 422) {
+            throw new Error('Este email já está registrado. Tente fazer login ou use a opção "Esqueci minha senha".');
+          }
+          throw error;
+        }
 
         toast({
           title: "Conta criada com sucesso!",
-          description: "Verifique seu email para confirmar a conta.",
+          description: "Verifique seu email para confirmar a conta antes de fazer login.",
         });
       }
     } catch (error: any) {
+      console.error('Authentication error:', error);
       toast({
         title: "Erro na autenticação",
         description: error.message,
