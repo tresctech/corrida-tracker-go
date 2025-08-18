@@ -7,7 +7,7 @@ export type Json =
   | Json[]
 
 export type Database = {
-  // Allows to automatically instanciate createClient with right options
+  // Allows to automatically instantiate createClient with right options
   // instead of createClient<Database, { PostgrestVersion: 'XX' }>(URL, KEY)
   __InternalSupabase: {
     PostgrestVersion: "12.2.12 (cd3cf9e)"
@@ -182,6 +182,84 @@ export type Database = {
         }
         Relationships: []
       }
+      workouts: {
+        Row: {
+          calories: number | null
+          created_at: string
+          date: string
+          distance: number
+          duration_minutes: number | null
+          duration_seconds: number | null
+          elevation_gain: number | null
+          heart_rate_avg: number | null
+          heart_rate_max: number | null
+          id: string
+          name: string
+          notes: string | null
+          pace_minutes: number | null
+          pace_seconds: number | null
+          perceived_effort: number | null
+          route_name: string | null
+          shoes_used: string | null
+          start_time: string
+          temperature: number | null
+          updated_at: string
+          user_id: string
+          weather: string | null
+          workout_type: string
+        }
+        Insert: {
+          calories?: number | null
+          created_at?: string
+          date: string
+          distance?: number
+          duration_minutes?: number | null
+          duration_seconds?: number | null
+          elevation_gain?: number | null
+          heart_rate_avg?: number | null
+          heart_rate_max?: number | null
+          id?: string
+          name: string
+          notes?: string | null
+          pace_minutes?: number | null
+          pace_seconds?: number | null
+          perceived_effort?: number | null
+          route_name?: string | null
+          shoes_used?: string | null
+          start_time: string
+          temperature?: number | null
+          updated_at?: string
+          user_id: string
+          weather?: string | null
+          workout_type?: string
+        }
+        Update: {
+          calories?: number | null
+          created_at?: string
+          date?: string
+          distance?: number
+          duration_minutes?: number | null
+          duration_seconds?: number | null
+          elevation_gain?: number | null
+          heart_rate_avg?: number | null
+          heart_rate_max?: number | null
+          id?: string
+          name?: string
+          notes?: string | null
+          pace_minutes?: number | null
+          pace_seconds?: number | null
+          perceived_effort?: number | null
+          route_name?: string | null
+          shoes_used?: string | null
+          start_time?: string
+          temperature?: number | null
+          updated_at?: string
+          user_id?: string
+          weather?: string | null
+          workout_type?: string
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
@@ -193,8 +271,8 @@ export type Database = {
       }
       has_role: {
         Args: {
-          _user_id: string
           _role: Database["public"]["Enums"]["app_role"]
+          _user_id: string
         }
         Returns: boolean
       }
