@@ -12,6 +12,7 @@ import { useSupabaseRaces } from "@/hooks/useSupabaseRaces";
 import { Race, RaceFormData } from "@/types/race";
 import { Button } from "@/components/ui/button";
 import { ArrowLeft, Plus, LogOut, User, Settings, Crown } from "lucide-react";
+import { ThemeToggle } from "@/components/ui/theme-toggle";
 import { useNavigate } from "react-router-dom";
 import { useToast } from "@/hooks/use-toast";
 import { PersonalTrainer } from "@/components/PersonalTrainer";
@@ -169,6 +170,8 @@ const Index = () => {
           </div>
           
           <div className="flex items-center gap-3">
+            <ThemeToggle />
+            
             <Button 
               onClick={handleAddRace}
               className="mobile-button running-gradient text-white border-0 flex-1 sm:flex-none racing-stripe energy-pulse"
