@@ -7,7 +7,7 @@
 
 @layer base {
   :root {
-    /* Running-inspired vibrant color palette */
+    /* Running/Fitness Design System */
     --background: 248 250 252;
     --foreground: 15 23 42;
 
@@ -17,46 +17,61 @@
     --popover: 255 255 255;
     --popover-foreground: 15 23 42;
 
-    /* Energetic primary colors - Orange/Red gradient for energy */
-    --primary: 249 115 22; /* Orange-500 */
-    --primary-foreground: 255 255 255;
-    --primary-glow: 251 146 60; /* Orange-400 */
-    --primary-dark: 234 88 12; /* Orange-600 */
+    /* Running Theme Colors */
+    --running-primary: 239 68 68; /* Red-500 - Energy & Passion */
+    --running-primary-foreground: 255 255 255;
+    --running-primary-light: 248 113 113; /* Red-400 */
+    --running-primary-dark: 220 38 38; /* Red-600 */
 
-    /* Secondary - Electric Blue for contrast */
-    --secondary: 59 130 246; /* Blue-500 */
-    --secondary-foreground: 255 255 255;
-    --secondary-glow: 96 165 250; /* Blue-400 */
+    --running-secondary: 59 130 246; /* Blue-500 - Performance & Speed */
+    --running-secondary-foreground: 255 255 255;
+    --running-secondary-light: 96 165 250; /* Blue-400 */
+    --running-secondary-dark: 37 99 235; /* Blue-600 */
 
-    /* Accent - Vibrant Green for success/achievements */
-    --accent: 34 197 94; /* Green-500 */
-    --accent-foreground: 255 255 255;
-    --accent-glow: 74 222 128; /* Green-400 */
+    --running-accent: 34 197 94; /* Green-500 - Achievement & Progress */
+    --running-accent-foreground: 255 255 255;
+    --running-accent-light: 74 222 128; /* Green-400 */
+    --running-accent-dark: 22 163 74; /* Green-600 */
+
+    --running-warning: 245 158 11; /* Amber-500 - Caution */
+    --running-warning-foreground: 255 255 255;
+
+    --running-neutral: 100 116 139; /* Slate-500 */
+    --running-neutral-light: 148 163 184; /* Slate-400 */
+    --running-neutral-dark: 71 85 105; /* Slate-600 */
+
+    /* Legacy mappings for compatibility */
+    --primary: var(--running-primary);
+    --primary-foreground: var(--running-primary-foreground);
+    --secondary: var(--running-secondary);
+    --secondary-foreground: var(--running-secondary-foreground);
+    --accent: var(--running-accent);
+    --accent-foreground: var(--running-accent-foreground);
 
     --muted: 241 245 249;
     --muted-foreground: 100 116 139;
-
-    --destructive: 239 68 68; /* Red-500 */
-    --destructive-foreground: 255 255 255;
-
+    --destructive: var(--running-primary);
+    --destructive-foreground: var(--running-primary-foreground);
     --border: 226 232 240;
     --input: 226 232 240;
-    --ring: 249 115 22;
-
+    --ring: var(--running-primary);
     --radius: 0.75rem;
 
     /* Running-specific gradients */
-    --gradient-primary: linear-gradient(135deg, hsl(var(--primary)), hsl(var(--primary-glow)));
-    --gradient-secondary: linear-gradient(135deg, hsl(var(--secondary)), hsl(var(--secondary-glow)));
-    --gradient-accent: linear-gradient(135deg, hsl(var(--accent)), hsl(var(--accent-glow)));
-    --gradient-hero: linear-gradient(135deg, hsl(var(--primary)) 0%, hsl(var(--secondary)) 50%, hsl(var(--accent)) 100%);
-    --gradient-card: linear-gradient(145deg, rgba(255,255,255,0.9), rgba(255,255,255,0.7));
+    --gradient-primary: linear-gradient(135deg, hsl(var(--running-primary)), hsl(var(--running-primary-light)));
+    --gradient-secondary: linear-gradient(135deg, hsl(var(--running-secondary)), hsl(var(--running-secondary-light)));
+    --gradient-accent: linear-gradient(135deg, hsl(var(--running-accent)), hsl(var(--running-accent-light)));
+    --gradient-hero: linear-gradient(135deg, hsl(var(--running-primary)) 0%, hsl(var(--running-secondary)) 50%, hsl(var(--running-accent)) 100%);
+    --gradient-card: linear-gradient(145deg, rgba(255,255,255,0.95), rgba(255,255,255,0.8));
 
-    /* Dynamic shadows with color */
-    --shadow-primary: 0 10px 25px -5px hsl(var(--primary) / 0.3);
-    --shadow-secondary: 0 10px 25px -5px hsl(var(--secondary) / 0.3);
-    --shadow-accent: 0 10px 25px -5px hsl(var(--accent) / 0.3);
-    --shadow-glow: 0 0 30px hsl(var(--primary-glow) / 0.4);
+    /* Dynamic shadows with running theme */
+    --shadow-glow: 0 0 40px hsl(var(--running-primary) / 0.3);
+    --shadow-card: 0 10px 30px -5px hsl(var(--running-primary) / 0.2);
+    --shadow-running: 0 20px 40px -10px hsl(var(--running-primary) / 0.3);
+
+    /* Smooth transitions */
+    --transition-smooth: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    --transition-bounce: all 0.5s cubic-bezier(0.68, -0.55, 0.265, 1.55);
 
     /* Sidebar colors */
     --sidebar-background: 255 255 255;
@@ -70,7 +85,7 @@
   }
 
   .dark {
-    /* Dark mode with energetic colors */
+    /* Dark mode with running theme */
     --background: 12 12 14;
     --foreground: 248 250 252;
 
@@ -80,35 +95,56 @@
     --popover: 24 24 27;
     --popover-foreground: 248 250 252;
 
-    --primary: 251 146 60; /* Brighter orange for dark mode */
-    --primary-foreground: 12 12 14;
-    --primary-glow: 253 186 116; /* Orange-300 */
-    --primary-dark: 249 115 22;
+    /* Running Colors - Dark Mode */
+    --running-primary: 248 113 113; /* Red-400 - Brighter for dark */
+    --running-primary-foreground: 12 12 14;
+    --running-primary-light: 252 165 165; /* Red-300 */
+    --running-primary-dark: 239 68 68; /* Red-500 */
 
-    --secondary: 96 165 250; /* Brighter blue */
-    --secondary-foreground: 12 12 14;
-    --secondary-glow: 147 197 253; /* Blue-300 */
+    --running-secondary: 96 165 250; /* Blue-400 */
+    --running-secondary-foreground: 12 12 14;
+    --running-secondary-light: 147 197 253; /* Blue-300 */
+    --running-secondary-dark: 59 130 246; /* Blue-500 */
 
-    --accent: 74 222 128; /* Brighter green */
-    --accent-foreground: 12 12 14;
-    --accent-glow: 134 239 172; /* Green-300 */
+    --running-accent: 74 222 128; /* Green-400 */
+    --running-accent-foreground: 12 12 14;
+    --running-accent-light: 134 239 172; /* Green-300 */
+    --running-accent-dark: 34 197 94; /* Green-500 */
+
+    --running-warning: 251 191 36; /* Amber-400 */
+    --running-warning-foreground: 12 12 14;
+
+    --running-neutral: 148 163 184; /* Slate-400 */
+    --running-neutral-light: 203 213 225; /* Slate-300 */
+    --running-neutral-dark: 100 116 139; /* Slate-500 */
+
+    /* Legacy mappings */
+    --primary: var(--running-primary);
+    --primary-foreground: var(--running-primary-foreground);
+    --secondary: var(--running-secondary);
+    --secondary-foreground: var(--running-secondary-foreground);
+    --accent: var(--running-accent);
+    --accent-foreground: var(--running-accent-foreground);
 
     --muted: 39 39 42;
     --muted-foreground: 161 161 170;
-
-    --destructive: 248 113 113; /* Red-400 */
-    --destructive-foreground: 12 12 14;
-
+    --destructive: var(--running-primary);
+    --destructive-foreground: var(--running-primary-foreground);
     --border: 39 39 42;
     --input: 39 39 42;
-    --ring: 251 146 60;
+    --ring: var(--running-primary);
 
     /* Dark mode gradients */
-    --gradient-primary: linear-gradient(135deg, hsl(var(--primary)), hsl(var(--primary-glow)));
-    --gradient-secondary: linear-gradient(135deg, hsl(var(--secondary)), hsl(var(--secondary-glow)));
-    --gradient-accent: linear-gradient(135deg, hsl(var(--accent)), hsl(var(--accent-glow)));
-    --gradient-hero: linear-gradient(135deg, hsl(var(--primary)) 0%, hsl(var(--secondary)) 50%, hsl(var(--accent)) 100%);
-    --gradient-card: linear-gradient(145deg, rgba(24,24,27,0.9), rgba(39,39,42,0.7));
+    --gradient-primary: linear-gradient(135deg, hsl(var(--running-primary)), hsl(var(--running-primary-light)));
+    --gradient-secondary: linear-gradient(135deg, hsl(var(--running-secondary)), hsl(var(--running-secondary-light)));
+    --gradient-accent: linear-gradient(135deg, hsl(var(--running-accent)), hsl(var(--running-accent-light)));
+    --gradient-hero: linear-gradient(135deg, hsl(var(--running-primary)) 0%, hsl(var(--running-secondary)) 50%, hsl(var(--running-accent)) 100%);
+    --gradient-card: linear-gradient(145deg, rgba(24,24,27,0.95), rgba(39,39,42,0.8));
+
+    /* Dark mode shadows */
+    --shadow-glow: 0 0 40px hsl(var(--running-primary) / 0.4);
+    --shadow-card: 0 10px 30px -5px hsl(var(--running-primary) / 0.3);
+    --shadow-running: 0 20px 40px -10px hsl(var(--running-primary) / 0.4);
 
     --sidebar-background: 24 24 27;
     --sidebar-foreground: 248 250 252;
@@ -154,39 +190,48 @@
 }
 
 @layer components {
-  /* Energy-focused running gradients */
+  /* Running Design System Components */
   .running-gradient {
     background: var(--gradient-primary);
-    box-shadow: var(--shadow-primary);
-    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    box-shadow: var(--shadow-card);
+    transition: var(--transition-smooth);
   }
   
   .running-gradient:hover {
-    transform: translateY(-2px);
+    transform: translateY(-3px);
     box-shadow: var(--shadow-glow);
   }
 
-  .secondary-gradient {
-    background: var(--gradient-secondary);
-    box-shadow: var(--shadow-secondary);
-  }
-
-  .accent-gradient {
-    background: var(--gradient-accent);
-    box-shadow: var(--shadow-accent);
-  }
-  
   .running-card {
     background: var(--gradient-card);
-    backdrop-filter: blur(12px);
-    border: 1px solid rgba(255, 255, 255, 0.2);
-    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
-    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    backdrop-filter: blur(16px);
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    box-shadow: var(--shadow-card);
+    transition: var(--transition-smooth);
+    border-radius: var(--radius);
   }
 
   .running-card:hover {
     transform: translateY(-4px) scale(1.02);
-    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15);
+    box-shadow: var(--shadow-running);
+  }
+
+  .running-glow {
+    box-shadow: var(--shadow-glow);
+    transition: var(--transition-smooth);
+  }
+
+  .running-glow:hover {
+    box-shadow: 0 0 60px hsl(var(--running-primary) / 0.5);
+    transform: scale(1.05);
+  }
+
+  .running-transition {
+    transition: var(--transition-smooth);
+  }
+
+  .running-bounce {
+    transition: var(--transition-bounce);
   }
 
   /* Animated background for energy */
