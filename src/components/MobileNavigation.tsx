@@ -9,9 +9,10 @@ interface MobileNavigationProps {
   currentView: View
   onViewChange: (view: View) => void
   onAddRace: () => void
+  hasActiveSubscription?: boolean
 }
 
-export function MobileNavigation({ currentView, onViewChange, onAddRace }: MobileNavigationProps) {
+export function MobileNavigation({ currentView, onViewChange, onAddRace, hasActiveSubscription = false }: MobileNavigationProps) {
   const { isAdmin } = useAuth()
 
   const navItems = [
@@ -39,13 +40,17 @@ export function MobileNavigation({ currentView, onViewChange, onAddRace }: Mobil
       icon: Dumbbell,
       emoji: "💪"
     },
-    { 
+  ]
+
+  // Add Personal Trainer only for premium users or admins
+  if (hasActiveSubscription || isAdmin) {
+    navItems.push({
       title: "Personal", 
       view: "personal" as View, 
       icon: Crown,
       emoji: "👑"
-    },
-  ]
+    });
+  }
 
   if (isAdmin) {
     navItems.push({

@@ -18,6 +18,7 @@ import { LiveTracking } from "@/components/LiveTracking";
 import { MobileNavigation } from "@/components/MobileNavigation";
 import { MobileHeader } from "@/components/MobileHeader";
 import { useIsMobile } from "@/hooks/use-mobile";
+import { useSubscription } from "@/hooks/useSubscription";
 
 type View = "dashboard" | "form" | "list" | "details" | "admin" | "personal" | "training" | "live-tracking";
 
@@ -27,6 +28,7 @@ const Index = () => {
   const { races, loading, addRace, updateRace, deleteRace, getStats } = useSupabaseRaces();
   const { toast } = useToast();
   const isMobile = useIsMobile();
+  const { subscribed: hasActiveSubscription } = useSubscription();
   const [currentView, setCurrentView] = useState<View>("dashboard");
   const [selectedRace, setSelectedRace] = useState<Race | undefined>();
 
@@ -212,6 +214,7 @@ const Index = () => {
         currentView={currentView}
         onViewChange={setCurrentView}
         onAddRace={handleAddRace}
+        hasActiveSubscription={hasActiveSubscription}
       />
       
       <ChangePasswordModal 
