@@ -13,6 +13,11 @@ const config: CapacitorConfig = {
       launchShowDuration: 2000,
       backgroundColor: '#000000',
       showSpinner: false
+    },
+    Geolocation: {
+      enableHighAccuracy: true,
+      timeout: 10000,
+      maximumAge: 3600000
     }
   }
 };

@@ -1,14 +1,15 @@
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
-import { ArrowLeft, Plus, Activity, Timer, Route, Trophy } from "lucide-react";
+import { ArrowLeft, Plus, Activity, Timer, Route, Trophy, Navigation } from "lucide-react";
 import { useWorkouts } from "@/hooks/useWorkouts";
 import { Workout, WorkoutFormData } from "@/types/workout";
 import { RunningCard } from "@/components/ui/running-card";
 import { WorkoutForm } from "@/components/WorkoutForm";
 import { WorkoutList } from "@/components/WorkoutList";
 import { WorkoutDetails } from "@/components/WorkoutDetails";
+import { LiveTracking } from "@/components/LiveTracking";
 
-type View = "dashboard" | "form" | "list" | "details";
+type View = "dashboard" | "form" | "list" | "details" | "live";
 
 interface TrainingProps {
   onBack: () => void;
@@ -37,6 +38,10 @@ export const Training = ({ onBack }: TrainingProps) => {
     setCurrentView("form");
   };
 
+  const handleLiveTracking = () => {
+    setCurrentView("live");
+  };
+
   const handleEditWorkout = (workout: Workout) => {
     setSelectedWorkout(workout);
     setCurrentView("form");
@@ -62,7 +67,7 @@ export const Training = ({ onBack }: TrainingProps) => {
   };
 
   const handleBack = () => {
-    if (currentView === "details" || currentView === "form") {
+    if (currentView === "details" || currentView === "form" || currentView === "live") {
       setCurrentView("dashboard");
     } else {
       onBack();
@@ -104,23 +109,34 @@ export const Training = ({ onBack }: TrainingProps) => {
       
       <div className="flex items-center gap-3 flex-wrap">
         {currentView === "dashboard" && (
-          <Button 
-            variant="outline" 
-            onClick={() => setCurrentView("list")}
-            className="mobile-button secondary-gradient text-white border-0 hover:scale-105"
-          >
-            📊 Ver Treinos
-          </Button>
+          <>
+            <Button 
+              variant="outline" 
+              onClick={() => setCurrentView("list")}
+              className="mobile-button secondary-gradient text-white border-0 hover:scale-105"
+            >
+              📊 Ver Treinos
+            </Button>
+            
+            <Button 
+              onClick={handleLiveTracking}
+              className="mobile-button running-gradient text-white border-0 racing-stripe"
+            >
+              <Navigation className="w-4 h-4 mr-1 sm:mr-2" />
+              <span className="hidden sm:inline">🛰️ Live Tracking</span>
+              <span className="sm:hidden">🛰️ Live</span>
+            </Button>
+          </>
         )}
         
         {(currentView === "list" || currentView === "details" || currentView === "dashboard") && (
           <Button 
             onClick={handleAddWorkout}
-            className="mobile-button running-gradient text-white border-0 racing-stripe"
+            className="mobile-button accent-gradient text-white border-0"
           >
             <Plus className="w-4 h-4 mr-1 sm:mr-2" />
-            <span className="hidden sm:inline">🏃‍♂️ Novo Treino</span>
-            <span className="sm:hidden">🏃‍♂️ Novo</span>
+            <span className="hidden sm:inline">➕ Novo Treino</span>
+            <span className="sm:hidden">➕ Novo</span>
           </Button>
         )}
       </div>
@@ -156,6 +172,14 @@ export const Training = ({ onBack }: TrainingProps) => {
             onClose={handleBack}
           />
         ) : null;
+
+      case "live":
+        return (
+          <LiveTracking
+            onSaveWorkout={handleFormSubmit}
+            onBack={handleBack}
+          />
+        );
 
       default:
         return (
