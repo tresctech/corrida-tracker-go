@@ -110,63 +110,69 @@ const Index = () => {
   const renderNavigation = () => {
     if (currentView === "dashboard") {
       return (
-        <div className="flex flex-col gap-4 mb-6 lg:flex-row lg:justify-between lg:items-center">
-          <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:gap-4">
-            <h1 className="text-2xl font-bold text-gray-800">PulseRun</h1>
+        <div className="flex flex-col gap-4 mb-8 lg:flex-row lg:justify-between lg:items-center">
+          <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:gap-6">
+            <h1 className="text-3xl font-bold bg-gradient-to-r from-orange-500 via-blue-500 to-green-500 bg-clip-text text-transparent">
+              🏃‍♂️ PulseRun
+            </h1>
             
-            <div className="flex flex-wrap gap-2">
+            <div className="flex flex-wrap gap-3">
               <Button 
                 variant="outline" 
                 onClick={() => setCurrentView("list")}
-                className="mobile-button text-sm sm:text-base"
+                className="mobile-button secondary-gradient text-white border-0 hover:scale-105"
               >
-                Ver Corridas
+                📊 Ver Corridas
               </Button>
 
               <Button 
                 variant="outline" 
                 onClick={() => setCurrentView("personal")}
-                className="mobile-button bg-gradient-to-r from-amber-50 to-orange-50 border-amber-200 text-amber-800 hover:from-amber-100 hover:to-orange-100"
+                className="mobile-button accent-gradient text-white border-0 hover:scale-105"
               >
                 <Crown className="w-4 h-4 mr-1 sm:mr-2" />
-                <span className="hidden sm:inline">Personal Trainer</span>
-                <span className="sm:hidden">Personal</span>
+                <span className="hidden sm:inline">💪 Personal Trainer</span>
+                <span className="sm:hidden">💪 Personal</span>
               </Button>
 
               {isAdmin && (
                 <Button 
                   variant="outline" 
                   onClick={() => setCurrentView("admin")}
-                  className="mobile-button"
+                  className="mobile-button bg-gradient-to-r from-purple-500 to-pink-500 text-white border-0 hover:scale-105"
                 >
                   <Settings className="w-4 h-4 mr-1 sm:mr-2" />
-                  <span className="hidden sm:inline">Administração</span>
-                  <span className="sm:hidden">Admin</span>
+                  <span className="hidden sm:inline">⚙️ Administração</span>
+                  <span className="sm:hidden">⚙️ Admin</span>
                 </Button>
               )}
             </div>
             
-            <div className="flex items-center gap-2 text-sm text-muted-foreground">
-              <User className="w-4 h-4" />
-              <span className="truncate max-w-[150px] sm:max-w-none">{user.email}</span>
-              {isAdmin && <span className="text-red-500 font-medium">(Admin)</span>}
+            <div className="flex items-center gap-3 p-3 rounded-xl bg-white/20 backdrop-blur-sm border border-white/30">
+              <div className="w-8 h-8 rounded-full bg-gradient-to-r from-orange-400 to-red-400 flex items-center justify-center">
+                <User className="w-4 h-4 text-white" />
+              </div>
+              <div className="flex flex-col">
+                <span className="text-sm font-medium text-white truncate max-w-[150px] sm:max-w-none">{user.email}</span>
+                {isAdmin && <span className="text-xs text-orange-200 font-semibold">👑 Administrador</span>}
+              </div>
             </div>
           </div>
           
-          <div className="flex items-center gap-2">
+          <div className="flex items-center gap-3">
             <Button 
               onClick={handleAddRace}
-              className="mobile-button running-gradient text-white hover:opacity-90 transition-opacity flex-1 sm:flex-none"
+              className="mobile-button running-gradient text-white border-0 flex-1 sm:flex-none racing-stripe energy-pulse"
             >
-              <Plus className="w-4 h-4 mr-1 sm:mr-2" />
-              <span className="hidden sm:inline">Adicionar Corrida</span>
-              <span className="sm:hidden">Nova</span>
+              <Plus className="w-5 h-5 mr-1 sm:mr-2" />
+              <span className="hidden sm:inline">🚀 Adicionar Corrida</span>
+              <span className="sm:hidden">🚀 Nova</span>
             </Button>
             
             <Button 
               variant="outline"
               onClick={handleSignOut}
-              className="mobile-button"
+              className="mobile-button bg-white/20 backdrop-blur-sm border-white/30 text-white hover:bg-white/30"
             >
               <LogOut className="w-4 h-4 sm:mr-2" />
               <span className="hidden sm:inline">Sair</span>
@@ -177,44 +183,46 @@ const Index = () => {
     }
 
     return (
-      <div className="flex flex-col gap-4 mb-6 sm:flex-row sm:justify-between sm:items-center">
-        <div className="flex items-center gap-3 sm:gap-4">
+      <div className="flex flex-col gap-4 mb-8 sm:flex-row sm:justify-between sm:items-center">
+        <div className="flex items-center gap-4 sm:gap-6">
           <Button 
             variant="outline" 
             onClick={handleBack}
-            className="mobile-button flex items-center gap-2"
+            className="mobile-button secondary-gradient text-white border-0 flex items-center gap-2 hover:scale-105"
           >
             <ArrowLeft className="w-4 h-4" />
-            Voltar
+            ⬅️ Voltar
           </Button>
           
-          <h1 className="text-xl font-bold text-gray-800">PulseRun</h1>
+          <h1 className="text-xl font-bold bg-gradient-to-r from-orange-500 to-blue-500 bg-clip-text text-transparent">
+            🏃‍♂️ PulseRun
+          </h1>
         </div>
         
-        <div className="flex items-center gap-2 flex-wrap">
+        <div className="flex items-center gap-3 flex-wrap">
           {(currentView === "list" || currentView === "details") && (
             <Button 
               onClick={handleAddRace}
-              className="mobile-button running-gradient text-white hover:opacity-90 transition-opacity"
+              className="mobile-button running-gradient text-white border-0 racing-stripe"
             >
               <Plus className="w-4 h-4 mr-1 sm:mr-2" />
-              <span className="hidden sm:inline">Nova Corrida</span>
-              <span className="sm:hidden">Nova</span>
+              <span className="hidden sm:inline">🚀 Nova Corrida</span>
+              <span className="sm:hidden">🚀 Nova</span>
             </Button>
           )}
 
           {currentView === "admin" && isAdmin && (
-            <div className="flex items-center gap-2 text-sm text-muted-foreground">
-              <Settings className="w-4 h-4" />
-              <span className="hidden sm:inline">Painel de Administração</span>
-              <span className="sm:hidden">Admin</span>
+            <div className="flex items-center gap-3 p-3 rounded-xl bg-purple-500/20 backdrop-blur-sm border border-purple-300/30">
+              <Settings className="w-5 h-5 text-purple-300" />
+              <span className="hidden sm:inline text-white font-medium">⚙️ Painel de Administração</span>
+              <span className="sm:hidden text-white font-medium">⚙️ Admin</span>
             </div>
           )}
           
           <Button 
             variant="outline"
             onClick={handleSignOut}
-            className="mobile-button"
+            className="mobile-button bg-white/20 backdrop-blur-sm border-white/30 text-white hover:bg-white/30"
           >
             <LogOut className="w-4 h-4 sm:mr-2" />
             <span className="hidden sm:inline">Sair</span>
@@ -271,7 +279,7 @@ const Index = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 to-green-50 safe-area-top safe-area-bottom">
+    <div className="min-h-screen energy-bg safe-area-top safe-area-bottom">
       <div className="container mx-auto mobile-container max-w-7xl">
         {renderNavigation()}
         {renderContent()}
