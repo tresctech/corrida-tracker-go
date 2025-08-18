@@ -20,7 +20,7 @@ interface MobileHeaderProps {
 
 const getViewTitle = (view: View) => {
   switch (view) {
-    case "dashboard": return "Dashboard"
+    case "dashboard": return "PulseRun"
     case "form": return "Nova Corrida"
     case "list": return "Minhas Corridas"
     case "details": return "Detalhes da Corrida"

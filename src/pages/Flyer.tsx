@@ -31,7 +31,7 @@ const Flyer = () => {
               className="flex items-center gap-2"
             >
               <ArrowLeft className="w-4 h-4" />
-              Voltar ao Dashboard
+              Voltar ao PulseRun
             </Button>
             
             <h1 className="text-2xl font-bold text-gray-800">Folder Promocional</h1>

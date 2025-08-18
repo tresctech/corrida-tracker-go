@@ -34,7 +34,7 @@ export function AppSidebar({ currentView, onViewChange, onAddRace }: AppSidebarP
 
   const mainItems = [
     { 
-      title: "Dashboard", 
+      title: "PulseRun", 
       view: "dashboard" as View, 
       icon: Home,
       description: "Visão geral"
