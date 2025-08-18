@@ -13,6 +13,12 @@ import {
   SidebarMenuItem,
   useSidebar,
 } from "@/components/ui/sidebar"
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "@/components/ui/tooltip"
 
 type View = "dashboard" | "form" | "list" | "details" | "admin" | "personal" | "training"
 
@@ -84,13 +90,24 @@ export function AppSidebar({ currentView, onViewChange, onAddRace }: AppSidebarP
 
         {/* Quick Actions */}
         <div className="p-4 border-b border-border/30">
-          <SidebarMenuButton 
-            onClick={onAddRace}
-            className="w-full justify-start bg-primary text-primary-foreground hover:bg-primary/90 transition-all duration-200 shadow-md hover:shadow-lg"
-          >
-            <Plus className="h-4 w-4" />
-            {open && <span className="ml-2 font-medium">Nova Corrida</span>}
-          </SidebarMenuButton>
+          <TooltipProvider>
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <SidebarMenuButton 
+                  onClick={onAddRace}
+                  className="w-full justify-start bg-primary text-primary-foreground hover:bg-primary/90 transition-all duration-200 shadow-md hover:shadow-lg"
+                >
+                  <Plus className="h-4 w-4" />
+                  {open && <span className="ml-2 font-medium">Nova Corrida</span>}
+                </SidebarMenuButton>
+              </TooltipTrigger>
+              {!open && (
+                <TooltipContent side="right" className="font-medium">
+                  Nova Corrida
+                </TooltipContent>
+              )}
+            </Tooltip>
+          </TooltipProvider>
         </div>
 
         {/* Main Navigation */}
@@ -100,26 +117,40 @@ export function AppSidebar({ currentView, onViewChange, onAddRace }: AppSidebarP
           </SidebarGroupLabel>
           <SidebarGroupContent>
             <SidebarMenu>
-              {mainItems.map((item) => (
-                <SidebarMenuItem key={item.title}>
-                  <SidebarMenuButton 
-                    onClick={() => onViewChange(item.view)}
-                    className={`w-full justify-start transition-all duration-200 hover:translate-x-1 ${
-                      isActive(item.view) 
-                        ? "bg-primary/15 text-primary border-l-4 border-primary shadow-sm dark:bg-primary/20" 
-                        : "hover:bg-accent/80 text-foreground dark:hover:bg-accent/50"
-                    }`}
-                  >
-                    <item.icon className="h-4 w-4 flex-shrink-0" />
-                    {open && (
-                      <div className="ml-3 flex flex-col items-start min-w-0">
-                        <span className="text-sm font-medium truncate">{item.title}</span>
-                        <span className="text-xs text-muted-foreground truncate">{item.description}</span>
-                      </div>
-                    )}
-                  </SidebarMenuButton>
-                </SidebarMenuItem>
-              ))}
+              <TooltipProvider>
+                {mainItems.map((item) => (
+                  <SidebarMenuItem key={item.title}>
+                    <Tooltip>
+                      <TooltipTrigger asChild>
+                        <SidebarMenuButton 
+                          onClick={() => onViewChange(item.view)}
+                          className={`w-full justify-start transition-all duration-200 hover:translate-x-1 ${
+                            isActive(item.view) 
+                              ? "bg-primary/15 text-primary border-l-4 border-primary shadow-sm dark:bg-primary/20" 
+                              : "hover:bg-accent/80 text-foreground dark:hover:bg-accent/50"
+                          }`}
+                        >
+                          <item.icon className="h-4 w-4 flex-shrink-0" />
+                          {open && (
+                            <div className="ml-3 flex flex-col items-start min-w-0">
+                              <span className="text-sm font-medium truncate">{item.title}</span>
+                              <span className="text-xs text-muted-foreground truncate">{item.description}</span>
+                            </div>
+                          )}
+                        </SidebarMenuButton>
+                      </TooltipTrigger>
+                      {!open && (
+                        <TooltipContent side="right" className="font-medium">
+                          <div>
+                            <div className="font-semibold">{item.title}</div>
+                            <div className="text-xs text-muted-foreground">{item.description}</div>
+                          </div>
+                        </TooltipContent>
+                      )}
+                    </Tooltip>
+                  </SidebarMenuItem>
+                ))}
+              </TooltipProvider>
             </SidebarMenu>
           </SidebarGroupContent>
         </SidebarGroup>
@@ -132,26 +163,40 @@ export function AppSidebar({ currentView, onViewChange, onAddRace }: AppSidebarP
             </SidebarGroupLabel>
             <SidebarGroupContent>
               <SidebarMenu>
-                {adminItems.map((item) => (
-                  <SidebarMenuItem key={item.title}>
-                    <SidebarMenuButton 
-                      onClick={() => onViewChange(item.view)}
-                      className={`w-full justify-start transition-all duration-200 hover:translate-x-1 ${
-                        isActive(item.view) 
-                          ? "bg-primary/15 text-primary border-l-4 border-primary shadow-sm dark:bg-primary/20" 
-                          : "hover:bg-accent/80 text-foreground dark:hover:bg-accent/50"
-                      }`}
-                    >
-                      <item.icon className="h-4 w-4 flex-shrink-0" />
-                      {open && (
-                        <div className="ml-3 flex flex-col items-start min-w-0">
-                          <span className="text-sm font-medium truncate">{item.title}</span>
-                          <span className="text-xs text-muted-foreground truncate">{item.description}</span>
-                        </div>
-                      )}
-                    </SidebarMenuButton>
-                  </SidebarMenuItem>
-                ))}
+                <TooltipProvider>
+                  {adminItems.map((item) => (
+                    <SidebarMenuItem key={item.title}>
+                      <Tooltip>
+                        <TooltipTrigger asChild>
+                          <SidebarMenuButton 
+                            onClick={() => onViewChange(item.view)}
+                            className={`w-full justify-start transition-all duration-200 hover:translate-x-1 ${
+                              isActive(item.view) 
+                                ? "bg-primary/15 text-primary border-l-4 border-primary shadow-sm dark:bg-primary/20" 
+                                : "hover:bg-accent/80 text-foreground dark:hover:bg-accent/50"
+                            }`}
+                          >
+                            <item.icon className="h-4 w-4 flex-shrink-0" />
+                            {open && (
+                              <div className="ml-3 flex flex-col items-start min-w-0">
+                                <span className="text-sm font-medium truncate">{item.title}</span>
+                                <span className="text-xs text-muted-foreground truncate">{item.description}</span>
+                              </div>
+                            )}
+                          </SidebarMenuButton>
+                        </TooltipTrigger>
+                        {!open && (
+                          <TooltipContent side="right" className="font-medium">
+                            <div>
+                              <div className="font-semibold">{item.title}</div>
+                              <div className="text-xs text-muted-foreground">{item.description}</div>
+                            </div>
+                          </TooltipContent>
+                        )}
+                      </Tooltip>
+                    </SidebarMenuItem>
+                  ))}
+                </TooltipProvider>
               </SidebarMenu>
             </SidebarGroupContent>
           </SidebarGroup>
