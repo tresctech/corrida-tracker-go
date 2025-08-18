@@ -10,7 +10,7 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
 
-type View = "dashboard" | "form" | "list" | "details" | "admin" | "personal" | "training"
+type View = "dashboard" | "form" | "list" | "details" | "admin" | "personal" | "training" | "live-tracking"
 
 interface MobileHeaderProps {
   currentView: View
@@ -27,6 +27,7 @@ const getViewTitle = (view: View) => {
     case "admin": return "Administração"
     case "personal": return "Personal Trainer"
     case "training": return "Treinos"
+    case "live-tracking": return "GPS Live Tracking"
     default: return "PulseRun"
   }
 }
@@ -40,6 +41,7 @@ const getViewEmoji = (view: View) => {
     case "admin": return "⚙️"
     case "personal": return "👑"
     case "training": return "💪"
+    case "live-tracking": return "🛰️"
     default: return "🏃‍♂️"
   }
 }

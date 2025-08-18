@@ -1,9 +1,9 @@
-import { Home, List, Dumbbell, Crown, Settings, Plus } from "lucide-react"
+import { Home, List, Dumbbell, Crown, Settings, Plus, Navigation } from "lucide-react"
 import { useAuth } from "@/hooks/useAuth"
 import { cn } from "@/lib/utils"
 import { Button } from "@/components/ui/button"
 
-type View = "dashboard" | "form" | "list" | "details" | "admin" | "personal" | "training"
+type View = "dashboard" | "form" | "list" | "details" | "admin" | "personal" | "training" | "live-tracking"
 
 interface MobileNavigationProps {
   currentView: View
@@ -20,6 +20,12 @@ export function MobileNavigation({ currentView, onViewChange, onAddRace }: Mobil
       view: "dashboard" as View, 
       icon: Home,
       emoji: "🏠"
+    },
+    { 
+      title: "GPS", 
+      view: "live-tracking" as View, 
+      icon: Navigation,
+      emoji: "🛰️"
     },
     { 
       title: "Corridas", 

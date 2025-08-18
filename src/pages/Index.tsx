@@ -14,11 +14,12 @@ import { useNavigate } from "react-router-dom";
 import { useToast } from "@/hooks/use-toast";
 import { PersonalTrainer } from "@/components/PersonalTrainer";
 import { Training } from "@/pages/Training";
+import { LiveTracking } from "@/components/LiveTracking";
 import { MobileNavigation } from "@/components/MobileNavigation";
 import { MobileHeader } from "@/components/MobileHeader";
 import { useIsMobile } from "@/hooks/use-mobile";
 
-type View = "dashboard" | "form" | "list" | "details" | "admin" | "personal" | "training";
+type View = "dashboard" | "form" | "list" | "details" | "admin" | "personal" | "training" | "live-tracking";
 
 const Index = () => {
   const navigate = useNavigate();
@@ -87,12 +88,35 @@ const Index = () => {
   };
 
   const handleBack = () => {
-    if (currentView === "details" || currentView === "form") {
+    if (currentView === "details" || currentView === "form" || currentView === "live-tracking") {
       setCurrentView("dashboard");
     } else {  
       setCurrentView("dashboard");
     }
     setSelectedRace(undefined);
+  };
+
+  const handleSaveWorkout = async (workoutData: any) => {
+    // Convert workout data to race format and save as completed training
+    const raceData: RaceFormData = {
+      name: workoutData.name,
+      status: 'completed' as const,
+      raceDate: workoutData.date.toISOString().split('T')[0],
+      startTime: workoutData.start_time,
+      distance: workoutData.distance,
+      kitPickupAddress: 'GPS Tracking', // Indicating this was GPS tracked
+      kitPickupDates: 'to-be-defined' as const,
+      observations: workoutData.notes,
+      completionTime: `${Math.floor(workoutData.duration_minutes / 60)}:${(workoutData.duration_minutes % 60).toString().padStart(2, '0')}:${workoutData.duration_seconds.toString().padStart(2, '0')}`
+    };
+    
+    await addRace(raceData);
+    setCurrentView("dashboard");
+    
+    toast({
+      title: "🎉 Treino salvo!",
+      description: `${workoutData.distance.toFixed(2)}km em ${Math.floor(workoutData.duration_minutes)}min registrados.`
+    });
   };
 
   const handleSignOut = async () => {
@@ -149,6 +173,14 @@ const Index = () => {
       
       case "training":
         return <Training onBack={() => setCurrentView("dashboard")} />;
+      
+      case "live-tracking":
+        return (
+          <LiveTracking 
+            onSaveWorkout={handleSaveWorkout}
+            onBack={() => setCurrentView("dashboard")} 
+          />
+        );
       
       default:
         return (
