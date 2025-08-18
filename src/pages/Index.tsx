@@ -15,8 +15,9 @@ import { ArrowLeft, Plus, LogOut, User, Settings, Crown } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { useToast } from "@/hooks/use-toast";
 import { PersonalTrainer } from "@/components/PersonalTrainer";
+import { Training } from "@/pages/Training";
 
-type View = "dashboard" | "form" | "list" | "details" | "admin" | "personal";
+type View = "dashboard" | "form" | "list" | "details" | "admin" | "personal" | "training";
 
 const Index = () => {
   const navigate = useNavigate();
@@ -123,6 +124,14 @@ const Index = () => {
                 className="mobile-button secondary-gradient text-white border-0 hover:scale-105"
               >
                 📊 Ver Corridas
+              </Button>
+
+              <Button 
+                variant="outline" 
+                onClick={() => setCurrentView("training")}
+                className="mobile-button running-gradient text-white border-0 hover:scale-105"
+              >
+                🏃‍♂️ Treinos
               </Button>
 
               <Button 
@@ -267,6 +276,9 @@ const Index = () => {
       
       case "personal":
         return <PersonalTrainer onBack={() => setCurrentView("dashboard")} />;
+      
+      case "training":
+        return <Training onBack={() => setCurrentView("dashboard")} />;
       
       default:
         return (
