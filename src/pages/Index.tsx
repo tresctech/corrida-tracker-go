@@ -11,12 +11,14 @@ import { useAuth } from "@/hooks/useAuth";
 import { useSupabaseRaces } from "@/hooks/useSupabaseRaces";
 import { Race, RaceFormData } from "@/types/race";
 import { Button } from "@/components/ui/button";
-import { ArrowLeft, Plus, LogOut, User, Settings, Crown } from "lucide-react";
+import { ArrowLeft, LogOut, User, Plus, Settings } from "lucide-react";
 import { ThemeToggle } from "@/components/ui/theme-toggle";
 import { useNavigate } from "react-router-dom";
 import { useToast } from "@/hooks/use-toast";
 import { PersonalTrainer } from "@/components/PersonalTrainer";
 import { Training } from "@/pages/Training";
+import { AppSidebar } from "@/components/AppSidebar";
+import { SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar";
 
 type View = "dashboard" | "form" | "list" | "details" | "admin" | "personal" | "training";
 
@@ -112,82 +114,34 @@ const Index = () => {
   const renderNavigation = () => {
     if (currentView === "dashboard") {
       return (
-        <div className="flex flex-col gap-4 mb-8 lg:flex-row lg:justify-between lg:items-center">
-          <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:gap-6">
-            <h1 className="text-3xl font-bold bg-gradient-to-r from-orange-500 via-blue-500 to-green-500 bg-clip-text text-transparent">
-              🏃‍♂️ PulseRun
+        <div className="flex justify-between items-center mb-8 p-4 bg-card border-b border-border">
+          <div className="flex items-center gap-4">
+            <SidebarTrigger className="lg:hidden" />
+            <h1 className="text-2xl font-bold text-foreground">
+              Dashboard
             </h1>
-            
-            <div className="flex flex-wrap gap-3">
-              <Button 
-                variant="outline" 
-                onClick={() => setCurrentView("list")}
-                className="mobile-button secondary-gradient text-white border-0 hover:scale-105"
-              >
-                📊 Ver Corridas
-              </Button>
-
-              <Button 
-                variant="outline" 
-                onClick={() => setCurrentView("training")}
-                className="mobile-button running-gradient text-white border-0 hover:scale-105"
-              >
-                🏃‍♂️ Treinos
-              </Button>
-
-              <Button 
-                variant="outline" 
-                onClick={() => setCurrentView("personal")}
-                className="mobile-button accent-gradient text-white border-0 hover:scale-105"
-              >
-                <Crown className="w-4 h-4 mr-1 sm:mr-2" />
-                <span className="hidden sm:inline">💪 Personal Trainer</span>
-                <span className="sm:hidden">💪 Personal</span>
-              </Button>
-
-              {isAdmin && (
-                <Button 
-                  variant="outline" 
-                  onClick={() => setCurrentView("admin")}
-                  className="mobile-button bg-gradient-to-r from-purple-500 to-pink-500 text-white border-0 hover:scale-105"
-                >
-                  <Settings className="w-4 h-4 mr-1 sm:mr-2" />
-                  <span className="hidden sm:inline">⚙️ Administração</span>
-                  <span className="sm:hidden">⚙️ Admin</span>
-                </Button>
-              )}
-            </div>
-            
-            <div className="flex items-center gap-3 p-3 rounded-xl bg-white/20 backdrop-blur-sm border border-white/30">
-              <div className="w-8 h-8 rounded-full bg-gradient-to-r from-orange-400 to-red-400 flex items-center justify-center">
-                <User className="w-4 h-4 text-white" />
-              </div>
-              <div className="flex flex-col">
-                <span className="text-sm font-medium text-white truncate max-w-[150px] sm:max-w-none">{user.email}</span>
-                {isAdmin && <span className="text-xs text-orange-200 font-semibold">👑 Administrador</span>}
-              </div>
-            </div>
           </div>
           
-          <div className="flex items-center gap-3">
-            <ThemeToggle />
+          <div className="flex items-center gap-4">
+            <div className="flex items-center gap-3 px-3 py-2 rounded-lg bg-muted">
+              <div className="w-8 h-8 rounded-full bg-primary flex items-center justify-center">
+                <User className="w-4 h-4 text-primary-foreground" />
+              </div>
+              <div className="flex flex-col">
+                <span className="text-sm font-medium text-foreground truncate max-w-[150px]">{user.email}</span>
+                {isAdmin && <span className="text-xs text-primary font-semibold">👑 Administrador</span>}
+              </div>
+            </div>
             
-            <Button 
-              onClick={handleAddRace}
-              className="mobile-button running-gradient text-white border-0 flex-1 sm:flex-none racing-stripe energy-pulse"
-            >
-              <Plus className="w-5 h-5 mr-1 sm:mr-2" />
-              <span className="hidden sm:inline">🚀 Adicionar Corrida</span>
-              <span className="sm:hidden">🚀 Nova</span>
-            </Button>
+            <ThemeToggle />
             
             <Button 
               variant="outline"
               onClick={handleSignOut}
-              className="mobile-button bg-white/20 backdrop-blur-sm border-white/30 text-white hover:bg-white/30"
+              className="text-foreground"
             >
-              <LogOut className="w-4 h-4 sm:mr-2" />
-              <span className="hidden sm:inline">Sair</span>
+              <LogOut className="w-4 h-4 mr-2" />
+              Sair
             </Button>
           </div>
         </div>
@@ -294,17 +248,29 @@ const Index = () => {
   };
 
   return (
-    <div className="min-h-screen energy-bg safe-area-top safe-area-bottom">
-      <div className="container mx-auto mobile-container max-w-7xl">
-        {renderNavigation()}
-        {renderContent()}
+    <SidebarProvider>
+      <div className="min-h-screen flex w-full">
+        <AppSidebar 
+          currentView={currentView}
+          onViewChange={setCurrentView}
+          onAddRace={handleAddRace}
+        />
+        
+        <main className="flex-1 bg-background">
+          <div className="max-w-7xl mx-auto">
+            {renderNavigation()}
+            <div className="p-6">
+              {renderContent()}
+            </div>
+          </div>
+        </main>
       </div>
       
       <ChangePasswordModal 
         isOpen={mustChangePassword} 
         onPasswordChanged={handlePasswordChanged}
       />
-    </div>
+    </SidebarProvider>
   );
 };
 
