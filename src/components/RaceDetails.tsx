@@ -26,15 +26,15 @@ export const RaceDetails = ({ race, onEdit, onClose }: RaceDetailsProps) => {
                 variant="outline" 
                 className={
                   race.status === "upcoming" 
-                    ? "bg-blue-50 text-blue-700 border-blue-200" 
+                    ? "bg-running-primary/10 text-running-primary border-running-primary/20" 
                     : race.status === "completed"
-                    ? "bg-green-50 text-green-700 border-green-200"
-                    : "bg-yellow-50 text-yellow-700 border-yellow-200"
+                    ? "bg-running-secondary/10 text-running-secondary border-running-secondary/20"
+                    : "bg-running-accent/10 text-running-accent border-running-accent/20"
                 }
               >
                 {race.status === "upcoming" ? "A Fazer" : race.status === "completed" ? "Realizada" : "Interesse"}
               </Badge>
-              <Badge variant="secondary" className="bg-purple-50 text-purple-700 border-purple-200">
+              <Badge variant="secondary" className="bg-running-accent/10 text-running-accent border-running-accent/20">
                 <Route className="w-3 h-3 mr-1" />
                 {race.distance} km
               </Badge>
@@ -56,21 +56,21 @@ export const RaceDetails = ({ race, onEdit, onClose }: RaceDetailsProps) => {
         {/* Data e Horário da Corrida */}
         <div className="space-y-3">
           <h3 className="font-semibold text-lg">Informações da Corrida</h3>
-          <div className="bg-blue-50 p-4 rounded-lg space-y-2">
+          <div className="bg-running-primary/10 p-4 rounded-lg space-y-2 border border-running-primary/20">
             <div className="flex items-center gap-3">
-              <Calendar className="w-5 h-5 text-blue-600" />
+              <Calendar className="w-5 h-5 text-running-primary" />
               <div>
-                <p className="font-medium text-blue-900">Data da Corrida</p>
-                <p className="text-blue-700">
+                <p className="font-medium text-foreground">Data da Corrida</p>
+                <p className="text-muted-foreground">
                   {format(race.raceDate, "EEEE, dd 'de' MMMM 'de' yyyy", { locale: ptBR })}
                 </p>
               </div>
             </div>
             <div className="flex items-center gap-3">
-              <Clock className="w-5 h-5 text-blue-600" />
+              <Clock className="w-5 h-5 text-running-primary" />
               <div>
-                <p className="font-medium text-blue-900">Horário de Largada</p>
-                <p className="text-blue-700">{race.startTime}</p>
+                <p className="font-medium text-foreground">Horário de Largada</p>
+                <p className="text-muted-foreground">{race.startTime}</p>
               </div>
             </div>
           </div>
@@ -82,16 +82,16 @@ export const RaceDetails = ({ race, onEdit, onClose }: RaceDetailsProps) => {
             <Separator />
             <div className="space-y-3">
               <h3 className="font-semibold text-lg flex items-center gap-2">
-                <Trophy className="w-5 h-5 text-yellow-600" />
+                <Trophy className="w-5 h-5 text-running-accent" />
                 Resultados da Corrida
               </h3>
-              <div className="bg-yellow-50 p-4 rounded-lg space-y-3">
+              <div className="bg-running-accent/10 p-4 rounded-lg space-y-3 border border-running-accent/20">
                 {race.raceResults.completionTime && (
                   <div className="flex items-center gap-3">
-                    <Timer className="w-5 h-5 text-yellow-600" />
+                    <Timer className="w-5 h-5 text-running-accent" />
                     <div>
-                      <p className="font-medium text-yellow-900">Tempo de Conclusão</p>
-                      <p className="text-yellow-700 text-lg font-mono">{race.raceResults.completionTime}</p>
+                      <p className="font-medium text-foreground">Tempo de Conclusão</p>
+                      <p className="text-muted-foreground text-lg font-mono">{race.raceResults.completionTime}</p>
                     </div>
                   </div>
                 )}
@@ -99,20 +99,20 @@ export const RaceDetails = ({ race, onEdit, onClose }: RaceDetailsProps) => {
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   {race.raceResults.overallPlacement && (
                     <div className="flex items-center gap-3">
-                      <Award className="w-5 h-5 text-yellow-600" />
+                      <Award className="w-5 h-5 text-running-accent" />
                       <div>
-                        <p className="font-medium text-yellow-900">Colocação Geral</p>
-                        <p className="text-yellow-700">{race.raceResults.overallPlacement}º lugar</p>
+                        <p className="font-medium text-foreground">Colocação Geral</p>
+                        <p className="text-muted-foreground">{race.raceResults.overallPlacement}º lugar</p>
                       </div>
                     </div>
                   )}
                   
                   {race.raceResults.ageGroupPlacement && (
                     <div className="flex items-center gap-3">
-                      <Award className="w-5 h-5 text-yellow-600" />
+                      <Award className="w-5 h-5 text-running-accent" />
                       <div>
-                        <p className="font-medium text-yellow-900">Colocação por Faixa Etária</p>
-                        <p className="text-yellow-700">{race.raceResults.ageGroupPlacement}º lugar</p>
+                        <p className="font-medium text-foreground">Colocação por Faixa Etária</p>
+                        <p className="text-muted-foreground">{race.raceResults.ageGroupPlacement}º lugar</p>
                       </div>
                     </div>
                   )}
@@ -120,10 +120,10 @@ export const RaceDetails = ({ race, onEdit, onClose }: RaceDetailsProps) => {
                 
                 {race.raceResults.shoesUsed && (
                   <div className="flex items-center gap-3">
-                    <Footprints className="w-5 h-5 text-yellow-600" />
+                    <Footprints className="w-5 h-5 text-running-accent" />
                     <div>
-                      <p className="font-medium text-yellow-900">Tênis Usado</p>
-                      <p className="text-yellow-700">{race.raceResults.shoesUsed}</p>
+                      <p className="font-medium text-foreground">Tênis Usado</p>
+                      <p className="text-muted-foreground">{race.raceResults.shoesUsed}</p>
                     </div>
                   </div>
                 )}
@@ -137,32 +137,32 @@ export const RaceDetails = ({ race, onEdit, onClose }: RaceDetailsProps) => {
         {/* Retirada do Kit */}
         <div className="space-y-3">
           <h3 className="font-semibold text-lg">Retirada do Kit</h3>
-          <div className="bg-green-50 p-4 rounded-lg space-y-3">
+          <div className="bg-running-secondary/10 p-4 rounded-lg space-y-3 border border-running-secondary/20">
             <div className="flex items-start gap-3">
-              <MapPin className="w-5 h-5 text-green-600 mt-0.5" />
+              <MapPin className="w-5 h-5 text-running-secondary mt-0.5" />
               <div>
-                <p className="font-medium text-green-900">Local</p>
-                <p className="text-green-700">{race.kitPickupAddress}</p>
+                <p className="font-medium text-foreground">Local</p>
+                <p className="text-muted-foreground">{race.kitPickupAddress}</p>
               </div>
             </div>
             
             {race.kitPickupDates === 'to-be-defined' ? (
               <div className="flex items-center gap-3">
-                <Calendar className="w-5 h-5 text-yellow-600" />
+                <Calendar className="w-5 h-5 text-running-accent" />
                 <div>
-                  <p className="font-medium text-yellow-900">Datas e Horários</p>
-                  <p className="text-yellow-700">A definir</p>
+                  <p className="font-medium text-foreground">Datas e Horários</p>
+                  <p className="text-muted-foreground">A definir</p>
                 </div>
               </div>
             ) : (
               <div className="space-y-2">
                 <div className="flex items-center gap-3">
-                  <Calendar className="w-5 h-5 text-green-600" />
-                  <p className="font-medium text-green-900">Datas e Horários Disponíveis</p>
+                  <Calendar className="w-5 h-5 text-running-secondary" />
+                  <p className="font-medium text-foreground">Datas e Horários Disponíveis</p>
                 </div>
                 <div className="ml-8 space-y-1">
                   {race.kitPickupDates.map((pickup, index) => (
-                    <p key={index} className="text-green-700">
+                    <p key={index} className="text-muted-foreground">
                       {format(pickup.date, "dd/MM/yyyy")} de {pickup.startTime} até {pickup.endTime}
                     </p>
                   ))}
@@ -178,16 +178,16 @@ export const RaceDetails = ({ race, onEdit, onClose }: RaceDetailsProps) => {
             <Separator />
             <div className="space-y-3">
               <h3 className="font-semibold text-lg">Comprovante de Inscrição</h3>
-              <div className="bg-gray-50 p-4 rounded-lg">
+              <div className="bg-card/50 p-4 rounded-lg border">
                 <Button
                   variant="outline"
                   onClick={() => window.open(race.registrationProof!.url, "_blank")}
                   className="w-full justify-start"
                 >
                   {race.registrationProof.type === "file" ? (
-                    <FileText className="w-4 h-4 mr-2 text-blue-600" />
+                    <FileText className="w-4 h-4 mr-2 text-running-primary" />
                   ) : (
-                    <ExternalLink className="w-4 h-4 mr-2 text-blue-600" />
+                    <ExternalLink className="w-4 h-4 mr-2 text-running-primary" />
                   )}
                   {race.registrationProof.type === "file" 
                     ? "Ver Arquivo" 
@@ -204,8 +204,8 @@ export const RaceDetails = ({ race, onEdit, onClose }: RaceDetailsProps) => {
             <Separator />
             <div className="space-y-3">
               <h3 className="font-semibold text-lg">Observações</h3>
-              <div className="bg-yellow-50 p-4 rounded-lg">
-                <p className="text-yellow-800 whitespace-pre-wrap">{race.observations}</p>
+              <div className="bg-running-accent/10 p-4 rounded-lg border border-running-accent/20">
+                <p className="text-foreground whitespace-pre-wrap">{race.observations}</p>
               </div>
             </div>
           </>

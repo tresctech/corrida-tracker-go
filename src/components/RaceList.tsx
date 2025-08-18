@@ -71,10 +71,10 @@ export const RaceList = ({ races, onEditRace, onDeleteRace, onViewDetails }: Rac
             variant="outline" 
             className={
               race.status === "upcoming" 
-                ? "bg-blue-50 text-blue-700 border-blue-200" 
+                ? "bg-running-primary/10 text-running-primary border-running-primary/20" 
                 : race.status === "completed"
-                ? "bg-green-50 text-green-700 border-green-200"
-                : "bg-purple-50 text-purple-700 border-purple-200"
+                ? "bg-running-secondary/10 text-running-secondary border-running-secondary/20"
+                : "bg-running-accent/10 text-running-accent border-running-accent/20"
             }
           >
             {race.status === "upcoming" ? "A Fazer" : race.status === "completed" ? "Realizada" : "Interesse"}
@@ -88,17 +88,17 @@ export const RaceList = ({ races, onEditRace, onDeleteRace, onViewDetails }: Rac
           </div>
         </div>
 
-        <div className="bg-gray-50 p-3 rounded-lg space-y-2">
+        <div className="bg-card/50 p-3 rounded-lg space-y-2 border">
           <div className="flex items-start gap-2">
-            <MapPin className="w-4 h-4 text-gray-600 mt-0.5" />
+            <MapPin className="w-4 h-4 text-muted-foreground mt-0.5" />
             <div>
-              <p className="font-medium text-gray-900">Retirada do Kit</p>
-              <p className="text-sm text-gray-600">{race.kitPickupAddress}</p>
+              <p className="font-medium text-foreground">Retirada do Kit</p>
+              <p className="text-sm text-muted-foreground">{race.kitPickupAddress}</p>
               {race.kitPickupDates === 'to-be-defined' ? (
-                <p className="text-sm text-gray-500">A definir</p>
+                <p className="text-sm text-muted-foreground">A definir</p>
               ) : (
                 race.kitPickupDates.length > 0 && (
-                  <p className="text-sm text-gray-500">
+                  <p className="text-sm text-muted-foreground">
                     {format(race.kitPickupDates[0].date, "dd/MM/yyyy")} das {race.kitPickupDates[0].startTime} às {race.kitPickupDates[0].endTime}
                     {race.kitPickupDates.length > 1 && ` (+${race.kitPickupDates.length - 1} mais)`}
                   </p>
@@ -111,14 +111,14 @@ export const RaceList = ({ races, onEditRace, onDeleteRace, onViewDetails }: Rac
         {race.registrationProof && (
           <div className="flex items-center gap-2">
             {race.registrationProof.type === "file" ? (
-              <FileText className="w-4 h-4 text-blue-600" />
+              <FileText className="w-4 h-4 text-running-primary" />
             ) : (
-              <ExternalLink className="w-4 h-4 text-blue-600" />
+              <ExternalLink className="w-4 h-4 text-running-primary" />
             )}
             <Button
               variant="link"
               size="sm"
-              className="p-0 h-auto text-blue-600"
+              className="p-0 h-auto text-running-primary hover:text-running-primary/80"
               onClick={() => window.open(race.registrationProof!.url, "_blank")}
             >
               Ver Comprovante
@@ -178,7 +178,7 @@ export const RaceList = ({ races, onEditRace, onDeleteRace, onViewDetails }: Rac
         <CardContent className="pt-6">
           <div className="flex flex-col sm:flex-row gap-4">
             <div className="relative flex-1">
-              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4" />
+              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground w-4 h-4" />
               <Input
                 placeholder="Buscar corridas..."
                 value={searchTerm}
@@ -244,10 +244,10 @@ export const RaceList = ({ races, onEditRace, onDeleteRace, onViewDetails }: Rac
               <Calendar className="w-4 h-4" />
               A Fazer ({upcomingRaces.length})
             </TabsTrigger>
-            <TabsTrigger value="completed" className="flex items-center gap-2">
-              <Badge variant="outline" className="bg-green-50 text-green-700 border-green-200 w-4 h-4 p-0">
-                ✓
-              </Badge>
+             <TabsTrigger value="completed" className="flex items-center gap-2">
+               <Badge variant="outline" className="bg-running-secondary/10 text-running-secondary border-running-secondary/20 w-4 h-4 p-0">
+                 ✓
+               </Badge>
               Realizadas ({completedRaces.length})
             </TabsTrigger>
             <TabsTrigger value="interest" className="flex items-center gap-2">
