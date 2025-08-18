@@ -23,12 +23,12 @@ export const useWorkouts = () => {
 
       if (error) throw error;
 
-      const formattedWorkouts = data.map(workout => ({
+      const formattedWorkouts: Workout[] = data.map(workout => ({
         ...workout,
         date: new Date(workout.date),
         created_at: new Date(workout.created_at),
         updated_at: new Date(workout.updated_at),
-        workout_type: workout.workout_type as any
+        workout_type: workout.workout_type as Workout['workout_type']
       }));
 
       setWorkouts(formattedWorkouts);
@@ -70,11 +70,12 @@ export const useWorkouts = () => {
 
       if (error) throw error;
 
-      const newWorkout = {
+      const newWorkout: Workout = {
         ...data,
         date: new Date(data.date),
         created_at: new Date(data.created_at),
-        updated_at: new Date(data.updated_at)
+        updated_at: new Date(data.updated_at),
+        workout_type: data.workout_type as Workout['workout_type']
       };
 
       setWorkouts(prev => [newWorkout, ...prev]);
@@ -117,11 +118,12 @@ export const useWorkouts = () => {
 
       if (error) throw error;
 
-      const updatedWorkout = {
+      const updatedWorkout: Workout = {
         ...data,
         date: new Date(data.date),
         created_at: new Date(data.created_at),
-        updated_at: new Date(data.updated_at)
+        updated_at: new Date(data.updated_at),
+        workout_type: data.workout_type as Workout['workout_type']
       };
 
       setWorkouts(prev => prev.map(workout => 
