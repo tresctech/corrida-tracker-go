@@ -79,7 +79,7 @@
   body {
     @apply text-foreground font-inter;
     min-height: 100vh;
-    background: var(--gradient-hero);
+    background: hsl(var(--background));
     /* Mobile optimization */
     -webkit-touch-callout: none;
     -webkit-user-select: none;
