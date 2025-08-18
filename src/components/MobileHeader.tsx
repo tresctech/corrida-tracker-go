@@ -49,7 +49,7 @@ export function MobileHeader({ currentView, onBack, onSignOut }: MobileHeaderPro
   const showBackButton = currentView !== "dashboard"
 
   return (
-    <header className="sticky top-0 z-40 w-full bg-background/95 backdrop-blur-lg border-b border-border/40 supports-[backdrop-filter]:bg-background/80">
+    <header className="sticky top-0 z-40 w-full bg-background/98 backdrop-blur-xl border-b border-border shadow-sm supports-[backdrop-filter]:bg-background/95">
       <div className="flex h-16 items-center justify-between px-4">
         {/* Left Side */}
         <div className="flex items-center gap-3">

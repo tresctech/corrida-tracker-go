@@ -53,14 +53,14 @@ export function MobileNavigation({ currentView, onViewChange, onAddRace }: Mobil
   const isActive = (view: View) => currentView === view
 
   return (
-    <div className="fixed bottom-0 left-0 right-0 z-50 bg-background/95 backdrop-blur-lg border-t border-border/50">
+    <div className="fixed bottom-0 left-0 right-0 z-50 bg-background/98 backdrop-blur-xl border-t border-border shadow-2xl">
       <div className="relative">
         {/* Floating Action Button */}
         <div className="absolute -top-8 left-1/2 transform -translate-x-1/2">
           <Button
             onClick={onAddRace}
             size="lg"
-            className="w-16 h-16 rounded-full bg-gradient-to-r from-primary to-secondary text-primary-foreground shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-110 border-4 border-background"
+            className="w-16 h-16 rounded-full bg-gradient-to-r from-primary via-primary to-secondary text-primary-foreground shadow-2xl hover:shadow-xl transition-all duration-300 hover:scale-110 border-4 border-background hover:from-primary/90 hover:to-secondary/90"
           >
             <Plus className="h-6 w-6" />
           </Button>
@@ -82,20 +82,20 @@ export function MobileNavigation({ currentView, onViewChange, onAddRace }: Mobil
                 )}
               >
                 <div className={cn(
-                  "relative p-2 rounded-xl transition-all duration-200",
+                  "relative p-2.5 rounded-xl transition-all duration-200",
                   isActive(item.view) 
-                    ? "bg-primary/20 text-primary" 
-                    : "text-muted-foreground hover:text-foreground hover:bg-accent/50"
+                    ? "bg-primary/20 text-primary shadow-sm dark:bg-primary/25" 
+                    : "text-muted-foreground hover:text-foreground hover:bg-accent/70 dark:hover:bg-accent/40"
                 )}>
                   <item.icon className="h-5 w-5" />
                   {isActive(item.view) && (
-                    <div className="absolute -top-1 -right-1 w-3 h-3 bg-primary rounded-full animate-pulse" />
+                    <div className="absolute -top-1 -right-1 w-3 h-3 bg-primary rounded-full animate-pulse shadow-sm" />
                   )}
                 </div>
                 <span className={cn(
                   "text-xs font-medium mt-1 transition-colors duration-200",
                   isActive(item.view) 
-                    ? "text-primary" 
+                    ? "text-primary font-semibold" 
                     : "text-muted-foreground"
                 )}>
                   {item.title}
