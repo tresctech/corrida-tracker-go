@@ -49,30 +49,30 @@
   }
 
   .light {
-    --background: 0 0% 98%;
-    --foreground: 222 84% 15%;
-    --card: 0 0% 100%;
-    --card-foreground: 222 84% 15%;
-    --popover: 0 0% 100%;
-    --popover-foreground: 222 84% 15%;
-    --primary: 217 91% 55%;
-    --primary-foreground: 0 0% 100%;
-    --secondary: 210 40% 94%;
-    --secondary-foreground: 222 84% 15%;
-    --muted: 210 40% 94%;
-    --muted-foreground: 215 16% 45%;
-    --accent: 210 40% 94%;
-    --accent-foreground: 222 84% 15%;
-    --destructive: 0 84% 60%;
-    --destructive-foreground: 0 0% 100%;
-    --border: 214 32% 88%;
-    --input: 214 32% 88%;
-    --ring: 217 91% 55%;
+    --background: 255 255 255;
+    --foreground: 15 23 42;
+    --card: 255 255 255;
+    --card-foreground: 15 23 42;
+    --popover: 255 255 255;
+    --popover-foreground: 15 23 42;
+    --primary: 37 99 235;
+    --primary-foreground: 255 255 255;
+    --secondary: 241 245 249;
+    --secondary-foreground: 15 23 42;
+    --muted: 248 250 252;
+    --muted-foreground: 100 116 139;
+    --accent: 241 245 249;
+    --accent-foreground: 15 23 42;
+    --destructive: 239 68 68;
+    --destructive-foreground: 255 255 255;
+    --border: 226 232 240;
+    --input: 226 232 240;
+    --ring: 37 99 235;
 
     /* Running theme colors for light mode */
-    --running-primary: 217 91% 55%;
-    --running-secondary: 142 76% 40%;
-    --running-accent: 47 96% 45%;
+    --running-primary: 37 99 235;
+    --running-secondary: 22 163 74;
+    --running-accent: 245 158 11;
 
     /* Light mode gradients */
     --gradient-primary: linear-gradient(135deg, hsl(217, 91%, 55%) 0%, hsl(142, 76%, 40%) 100%);
@@ -83,6 +83,16 @@
     --glow-primary: 0 0 15px hsl(217, 91%, 55%, 0.3);
     --glow-secondary: 0 0 15px hsl(142, 76%, 40%, 0.3);
     --shadow-elegant: 0 8px 25px -8px hsl(217, 91%, 55%, 0.2);
+
+    /* Sidebar specific light mode */
+    --sidebar-background: 248 250 252;
+    --sidebar-foreground: 15 23 42;
+    --sidebar-primary: 37 99 235;
+    --sidebar-primary-foreground: 255 255 255;
+    --sidebar-accent: 241 245 249;
+    --sidebar-accent-foreground: 15 23 42;
+    --sidebar-border: 226 232 240;
+    --sidebar-ring: 37 99 235;
   }
 }
 
@@ -247,5 +257,56 @@
   @keyframes energyGlow {
     from { box-shadow: 0 4px 20px hsl(var(--primary) / 0.3); }
     to { box-shadow: 0 8px 40px hsl(var(--primary) / 0.6); }
+  }
+
+  /* Mobile sidebar improvements */
+  @media (max-width: 768px) {
+    .sidebar-mobile {
+      position: fixed;
+      top: 0;
+      left: 0;
+      z-index: 50;
+      height: 100vh;
+      transition: transform 0.3s ease-in-out;
+    }
+    
+    .sidebar-mobile.closed {
+      transform: translateX(-100%);
+    }
+    
+    .sidebar-overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(0, 0, 0, 0.5);
+      z-index: 40;
+    }
+  }
+
+  /* Improved mobile responsiveness */
+  @media (max-width: 640px) {
+    .mobile-header {
+      padding: 0.75rem 1rem;
+    }
+    
+    .mobile-sidebar-item {
+      padding: 0.75rem 1rem;
+      min-height: 48px;
+    }
+    
+    .mobile-sidebar-text {
+      font-size: 0.875rem;
+      line-height: 1.25rem;
+    }
+  }
+
+  /* Tablet optimizations */
+  @media (min-width: 641px) and (max-width: 1024px) {
+    .tablet-sidebar {
+      width: 240px;
+    }
+    
+    .tablet-content {
+      padding: 1rem 1.5rem;
+    }
   }
 }

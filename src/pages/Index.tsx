@@ -114,37 +114,40 @@ const Index = () => {
   const renderNavigation = () => {
     if (currentView === "dashboard") {
       return (
-        <div className="flex justify-between items-center mb-8 p-4 bg-card border-b border-border">
-          <div className="flex items-center gap-4">
-            <SidebarTrigger className="lg:hidden" />
-            <h1 className="text-2xl font-bold text-foreground">
-              Dashboard
-            </h1>
-          </div>
-          
-          <div className="flex items-center gap-4">
-            <div className="flex items-center gap-3 px-3 py-2 rounded-lg bg-muted">
-              <div className="w-8 h-8 rounded-full bg-primary flex items-center justify-center">
-                <User className="w-4 h-4 text-primary-foreground" />
-              </div>
-              <div className="flex flex-col">
-                <span className="text-sm font-medium text-foreground truncate max-w-[150px]">{user.email}</span>
-                {isAdmin && <span className="text-xs text-primary font-semibold">👑 Administrador</span>}
-              </div>
+        <header className="sticky top-0 z-40 w-full border-b border-border/40 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
+          <div className="flex h-14 items-center justify-between px-4 lg:px-6">
+            <div className="flex items-center gap-4">
+              <SidebarTrigger className="md:hidden" />
+              <h1 className="text-xl font-bold text-foreground hidden sm:block">
+                Dashboard
+              </h1>
             </div>
             
-            <ThemeToggle />
-            
-            <Button 
-              variant="outline"
-              onClick={handleSignOut}
-              className="text-foreground"
-            >
-              <LogOut className="w-4 h-4 mr-2" />
-              Sair
-            </Button>
+            <div className="flex items-center gap-3">
+              <div className="hidden sm:flex items-center gap-2 px-3 py-1.5 rounded-lg bg-muted/50 border border-border/50">
+                <div className="w-6 h-6 rounded-full bg-primary flex items-center justify-center">
+                  <User className="w-3 h-3 text-primary-foreground" />
+                </div>
+                <div className="flex flex-col">
+                  <span className="text-xs font-medium text-foreground truncate max-w-[120px]">{user.email}</span>
+                  {isAdmin && <span className="text-xs text-primary font-semibold">👑 Admin</span>}
+                </div>
+              </div>
+              
+              <ThemeToggle />
+              
+              <Button 
+                variant="outline"
+                size="sm"
+                onClick={handleSignOut}
+                className="text-foreground"
+              >
+                <LogOut className="w-4 h-4 mr-2" />
+                <span className="hidden sm:inline">Sair</span>
+              </Button>
+            </div>
           </div>
-        </div>
+        </header>
       );
     }
 
@@ -249,17 +252,17 @@ const Index = () => {
 
   return (
     <SidebarProvider>
-      <div className="min-h-screen flex w-full">
+      <div className="min-h-screen flex w-full bg-background">
         <AppSidebar 
           currentView={currentView}
           onViewChange={setCurrentView}
           onAddRace={handleAddRace}
         />
         
-        <main className="flex-1 bg-background">
-          <div className="max-w-7xl mx-auto">
-            {renderNavigation()}
-            <div className="p-6">
+        <main className="flex-1 flex flex-col min-w-0">
+          {renderNavigation()}
+          <div className="flex-1 p-4 md:p-6 overflow-auto">
+            <div className="max-w-7xl mx-auto">
               {renderContent()}
             </div>
           </div>
