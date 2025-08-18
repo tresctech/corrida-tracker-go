@@ -49,13 +49,14 @@
   }
 
   .light {
-    --background: 255 255 255;
+    /* Clean, bright background with subtle gradients */
+    --background: 248 250 252;
     --foreground: 15 23 42;
     --card: 255 255 255;
     --card-foreground: 15 23 42;
     --popover: 255 255 255;
     --popover-foreground: 15 23 42;
-    --primary: 37 99 235;
+    --primary: 217 91% 60%;
     --primary-foreground: 255 255 255;
     --secondary: 241 245 249;
     --secondary-foreground: 15 23 42;
@@ -66,33 +67,33 @@
     --destructive: 239 68 68;
     --destructive-foreground: 255 255 255;
     --border: 226 232 240;
-    --input: 226 232 240;
-    --ring: 37 99 235;
+    --input: 255 255 255;
+    --ring: 217 91% 60%;
 
-    /* Running theme colors for light mode */
-    --running-primary: 37 99 235;
-    --running-secondary: 22 163 74;
-    --running-accent: 245 158 11;
+    /* Running theme colors for light mode - matching dark mode intensity */
+    --running-primary: 217 91% 60%;
+    --running-secondary: 142 76% 36%;
+    --running-accent: 47 96% 53%;
 
-    /* Light mode gradients */
-    --gradient-primary: linear-gradient(135deg, hsl(217, 91%, 55%) 0%, hsl(142, 76%, 40%) 100%);
-    --gradient-secondary: linear-gradient(135deg, hsl(142, 76%, 40%) 0%, hsl(47, 96%, 45%) 100%);
-    --gradient-subtle: linear-gradient(135deg, hsl(210, 40%, 94%) 0%, hsl(0, 0%, 98%) 100%);
+    /* Enhanced light mode gradients - matching dark mode energy */
+    --gradient-primary: linear-gradient(135deg, hsl(217, 91%, 60%) 0%, hsl(142, 76%, 36%) 100%);
+    --gradient-secondary: linear-gradient(135deg, hsl(142, 76%, 36%) 0%, hsl(47, 96%, 53%) 100%);
+    --gradient-subtle: linear-gradient(135deg, hsl(210, 40%, 96%) 0%, hsl(220, 60%, 98%) 100%);
 
-    /* Light mode glow effects */
-    --glow-primary: 0 0 15px hsl(217, 91%, 55%, 0.3);
-    --glow-secondary: 0 0 15px hsl(142, 76%, 40%, 0.3);
-    --shadow-elegant: 0 8px 25px -8px hsl(217, 91%, 55%, 0.2);
+    /* Enhanced light mode glow effects - more prominent like dark mode */
+    --glow-primary: 0 0 20px hsl(217, 91%, 60%, 0.4);
+    --glow-secondary: 0 0 20px hsl(142, 76%, 36%, 0.4);
+    --shadow-elegant: 0 10px 30px -10px hsl(217, 91%, 60%, 0.25);
 
-    /* Sidebar specific light mode */
-    --sidebar-background: 248 250 252;
+    /* Enhanced sidebar specific light mode */
+    --sidebar-background: 255 255 255;
     --sidebar-foreground: 15 23 42;
-    --sidebar-primary: 37 99 235;
+    --sidebar-primary: 217 91% 60%;
     --sidebar-primary-foreground: 255 255 255;
-    --sidebar-accent: 241 245 249;
+    --sidebar-accent: 248 250 252;
     --sidebar-accent-foreground: 15 23 42;
     --sidebar-border: 226 232 240;
-    --sidebar-ring: 37 99 235;
+    --sidebar-ring: 217 91% 60%;
   }
 }
 
@@ -144,7 +145,8 @@
   .running-card {
     background: hsl(var(--card));
     border: 1px solid hsl(var(--border));
-    box-shadow: 0 4px 6px -1px hsl(var(--foreground) / 0.1);
+    box-shadow: 0 8px 25px -8px hsl(var(--foreground) / 0.1), 0 4px 12px -4px hsl(var(--primary) / 0.1);
+    backdrop-filter: blur(10px);
   }
 
   .running-transition {
@@ -308,5 +310,44 @@
     .tablet-content {
       padding: 1rem 1.5rem;
     }
+  }
+  
+  /* Enhanced card effects for light mode */
+  .light .running-glow {
+    background: hsl(var(--card));
+    border: 1px solid hsl(var(--running-primary) / 0.2);
+    box-shadow: 
+      0 8px 25px -8px hsl(var(--running-primary) / 0.15),
+      0 4px 12px -4px hsl(var(--running-primary) / 0.1),
+      inset 0 1px 0 hsl(255, 255, 255, 0.8);
+    backdrop-filter: blur(10px);
+  }
+
+  .light .running-card {
+    background: hsl(var(--card));
+    border: 1px solid hsl(var(--border));
+    box-shadow: 
+      0 8px 25px -8px hsl(15, 23, 42, 0.08),
+      0 4px 12px -4px hsl(var(--primary) / 0.08),
+      inset 0 1px 0 hsl(255, 255, 255, 0.9);
+    backdrop-filter: blur(10px);
+  }
+
+  .light .stats-card {
+    background: hsl(var(--card));
+    border: 1px solid hsl(var(--border));
+    box-shadow: 
+      0 10px 30px -10px hsl(15, 23, 42, 0.1),
+      0 6px 16px -6px hsl(var(--primary) / 0.1),
+      inset 0 1px 0 hsl(255, 255, 255, 0.9);
+    backdrop-filter: blur(12px);
+  }
+
+  /* Enhanced gradient backgrounds for light mode */
+  .light .running-gradient {
+    background: var(--gradient-primary);
+    box-shadow: 
+      var(--shadow-elegant),
+      inset 0 1px 0 hsl(255, 255, 255, 0.2);
   }
 }
