@@ -1,41 +1,28 @@
 import * as React from "react";
-import { cva, type VariantProps } from "class-variance-authority";
 import { cn } from "@/lib/utils";
 
-const runningCardVariants = cva(
-  "running-card p-6 text-card-foreground",
-  {
-    variants: {
-      variant: {
-        default: "running-card",
-        glow: "running-card running-glow",
-        premium: "running-card running-glow animate-pulse-glow border-2 border-running-primary/20"
-      },
-      size: {
-        default: "p-6",
-        sm: "p-4",
-        lg: "p-8"
-      }
-    },
-    defaultVariants: {
-      variant: "default",
-      size: "default"
-    }
-  }
-);
-
-export interface RunningCardProps
-  extends React.HTMLAttributes<HTMLDivElement>,
-    VariantProps<typeof runningCardVariants> {}
+interface RunningCardProps extends React.HTMLAttributes<HTMLDivElement> {
+  variant?: "default" | "glow" | "premium";
+  children: React.ReactNode;
+}
 
 const RunningCard = React.forwardRef<HTMLDivElement, RunningCardProps>(
-  ({ className, variant, size, ...props }, ref) => (
-    <div
-      ref={ref}
-      className={cn(runningCardVariants({ variant, size, className }))}
-      {...props}
-    />
-  )
+  ({ className, variant = "default", children, ...props }, ref) => {
+    return (
+      <div
+        ref={ref}
+        className={cn(
+          "running-card rounded-xl p-6 running-transition",
+          variant === "glow" && "running-glow animate-pulse-glow",
+          variant === "premium" && "running-gradient text-white",
+          className
+        )}
+        {...props}
+      >
+        {children}
+      </div>
+    );
+  }
 );
 
 RunningCard.displayName = "RunningCard";

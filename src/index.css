@@ -7,153 +7,67 @@
 
 @layer base {
   :root {
-    /* Running/Fitness Design System */
-    --background: 248 250 252;
-    --foreground: 15 23 42;
-
-    --card: 255 255 255;
-    --card-foreground: 15 23 42;
-
-    --popover: 255 255 255;
-    --popover-foreground: 15 23 42;
-
-    /* Running Theme Colors - Azul Vibrante + Verde Esportivo */
-    --running-primary: 59 130 246; /* Blue-500 - Azul vibrante principal */
-    --running-primary-foreground: 255 255 255;
-    --running-primary-light: 96 165 250; /* Blue-400 */
-    --running-primary-dark: 37 99 235; /* Blue-600 */
-
-    --running-secondary: 34 197 94; /* Green-500 - Verde esportivo */
-    --running-secondary-foreground: 255 255 255;
-    --running-secondary-light: 74 222 128; /* Green-400 */
-    --running-secondary-dark: 22 163 74; /* Green-600 */
-
-    --running-accent: 16 185 129; /* Emerald-500 - Verde accent */
-    --running-accent-foreground: 255 255 255;
-    --running-accent-light: 52 211 153; /* Emerald-400 */
-    --running-accent-dark: 5 150 105; /* Emerald-600 */
-
-    --running-warning: 245 158 11; /* Amber-500 - Para avisos */
-    --running-warning-foreground: 255 255 255;
-
-    --running-neutral: 100 116 139; /* Slate-500 */
-    --running-neutral-light: 148 163 184; /* Slate-400 */
-    --running-neutral-dark: 71 85 105; /* Slate-600 */
-
-    /* Legacy mappings for compatibility */
-    --primary: var(--running-primary);
-    --primary-foreground: var(--running-primary-foreground);
-    --secondary: var(--running-secondary);
-    --secondary-foreground: var(--running-secondary-foreground);
-    --accent: var(--running-accent);
-    --accent-foreground: var(--running-accent-foreground);
-
-    --muted: 241 245 249;
-    --muted-foreground: 100 116 139;
-    --destructive: var(--running-primary);
-    --destructive-foreground: var(--running-primary-foreground);
-    --border: 226 232 240;
-    --input: 226 232 240;
-    --ring: var(--running-primary);
+    /* Core colors */
+    --background: 222 84% 5%;
+    --foreground: 210 40% 98%;
+    --card: 222 84% 5%;
+    --card-foreground: 210 40% 98%;
+    --popover: 222 84% 5%;
+    --popover-foreground: 210 40% 98%;
+    --primary: 217 91% 60%;
+    --primary-foreground: 222 84% 5%;
+    --secondary: 217 32% 17%;
+    --secondary-foreground: 210 40% 98%;
+    --muted: 217 32% 17%;
+    --muted-foreground: 215 20% 65%;
+    --accent: 217 32% 17%;
+    --accent-foreground: 210 40% 98%;
+    --destructive: 0 62% 30%;
+    --destructive-foreground: 210 40% 98%;
+    --border: 217 32% 17%;
+    --input: 217 32% 17%;
+    --ring: 217 91% 60%;
     --radius: 0.75rem;
 
-    /* Running-specific gradients - Azul + Verde */
-    --gradient-primary: linear-gradient(135deg, hsl(var(--running-primary)), hsl(var(--running-primary-light)));
-    --gradient-secondary: linear-gradient(135deg, hsl(var(--running-secondary)), hsl(var(--running-secondary-light)));
-    --gradient-accent: linear-gradient(135deg, hsl(var(--running-accent)), hsl(var(--running-accent-light)));
-    --gradient-hero: linear-gradient(135deg, hsl(var(--running-primary)) 0%, hsl(var(--running-secondary)) 100%);
-    --gradient-card: linear-gradient(145deg, rgba(255,255,255,0.95), rgba(255,255,255,0.8));
+    /* Running theme colors */
+    --running-primary: 217 91% 60%;
+    --running-secondary: 142 76% 36%;
+    --running-accent: 47 96% 53%;
 
-    /* Dynamic shadows with running theme */
-    --shadow-glow: 0 0 40px hsl(var(--running-primary) / 0.3);
-    --shadow-card: 0 10px 30px -5px hsl(var(--running-primary) / 0.2);
-    --shadow-running: 0 20px 40px -10px hsl(var(--running-primary) / 0.3);
+    /* Advanced gradients */
+    --gradient-primary: linear-gradient(135deg, hsl(217, 91%, 60%) 0%, hsl(142, 76%, 36%) 100%);
+    --gradient-secondary: linear-gradient(135deg, hsl(142, 76%, 36%) 0%, hsl(47, 96%, 53%) 100%);
+    --gradient-subtle: linear-gradient(135deg, hsl(217, 32%, 17%) 0%, hsl(222, 84%, 5%) 100%);
 
-    /* Smooth transitions */
+    /* Glow effects */
+    --glow-primary: 0 0 20px hsl(217, 91%, 60%, 0.5);
+    --glow-secondary: 0 0 20px hsl(142, 76%, 36%, 0.5);
+    --shadow-elegant: 0 10px 30px -10px hsl(217, 91%, 60%, 0.3);
+
+    /* Transitions */
     --transition-smooth: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-    --transition-bounce: all 0.5s cubic-bezier(0.68, -0.55, 0.265, 1.55);
-
-    /* Sidebar colors */
-    --sidebar-background: 255 255 255;
-    --sidebar-foreground: 15 23 42;
-    --sidebar-primary: 249 115 22;
-    --sidebar-primary-foreground: 255 255 255;
-    --sidebar-accent: 248 250 252;
-    --sidebar-accent-foreground: 15 23 42;
-    --sidebar-border: 226 232 240;
-    --sidebar-ring: 249 115 22;
   }
 
-  .dark {
-    /* Dark mode with running theme */
-    --background: 12 12 14;
-    --foreground: 248 250 252;
-
-    --card: 24 24 27;
-    --card-foreground: 248 250 252;
-
-    --popover: 24 24 27;
-    --popover-foreground: 248 250 252;
-
-    /* Running Colors - Dark Mode - Azul + Verde */
-    --running-primary: 96 165 250; /* Blue-400 - Mais brilhante para dark */
-    --running-primary-foreground: 12 12 14;
-    --running-primary-light: 147 197 253; /* Blue-300 */
-    --running-primary-dark: 59 130 246; /* Blue-500 */
-
-    --running-secondary: 74 222 128; /* Green-400 */
-    --running-secondary-foreground: 12 12 14;
-    --running-secondary-light: 134 239 172; /* Green-300 */
-    --running-secondary-dark: 34 197 94; /* Green-500 */
-
-    --running-accent: 52 211 153; /* Emerald-400 */
-    --running-accent-foreground: 12 12 14;
-    --running-accent-light: 110 231 183; /* Emerald-300 */
-    --running-accent-dark: 16 185 129; /* Emerald-500 */
-
-    --running-warning: 251 191 36; /* Amber-400 */
-    --running-warning-foreground: 12 12 14;
-
-    --running-neutral: 148 163 184; /* Slate-400 */
-    --running-neutral-light: 203 213 225; /* Slate-300 */
-    --running-neutral-dark: 100 116 139; /* Slate-500 */
-
-    /* Legacy mappings */
-    --primary: var(--running-primary);
-    --primary-foreground: var(--running-primary-foreground);
-    --secondary: var(--running-secondary);
-    --secondary-foreground: var(--running-secondary-foreground);
-    --accent: var(--running-accent);
-    --accent-foreground: var(--running-accent-foreground);
-
-    --muted: 39 39 42;
-    --muted-foreground: 161 161 170;
-    --destructive: var(--running-primary);
-    --destructive-foreground: var(--running-primary-foreground);
-    --border: 39 39 42;
-    --input: 39 39 42;
-    --ring: var(--running-primary);
-
-    /* Dark mode gradients - Azul + Verde */
-    --gradient-primary: linear-gradient(135deg, hsl(var(--running-primary)), hsl(var(--running-primary-light)));
-    --gradient-secondary: linear-gradient(135deg, hsl(var(--running-secondary)), hsl(var(--running-secondary-light)));
-    --gradient-accent: linear-gradient(135deg, hsl(var(--running-accent)), hsl(var(--running-accent-light)));
-    --gradient-hero: linear-gradient(135deg, hsl(var(--running-primary)) 0%, hsl(var(--running-secondary)) 100%);
-    --gradient-card: linear-gradient(145deg, rgba(24,24,27,0.95), rgba(39,39,42,0.8));
-
-    /* Dark mode shadows */
-    --shadow-glow: 0 0 40px hsl(var(--running-primary) / 0.4);
-    --shadow-card: 0 10px 30px -5px hsl(var(--running-primary) / 0.3);
-    --shadow-running: 0 20px 40px -10px hsl(var(--running-primary) / 0.4);
-
-    --sidebar-background: 24 24 27;
-    --sidebar-foreground: 248 250 252;
-    --sidebar-primary: 251 146 60;
-    --sidebar-primary-foreground: 12 12 14;
-    --sidebar-accent: 39 39 42;
-    --sidebar-accent-foreground: 248 250 252;
-    --sidebar-border: 39 39 42;
-    --sidebar-ring: 251 146 60;
+  .light {
+    --background: 0 0% 100%;
+    --foreground: 222 84% 5%;
+    --card: 0 0% 100%;
+    --card-foreground: 222 84% 5%;
+    --popover: 0 0% 100%;
+    --popover-foreground: 222 84% 5%;
+    --primary: 217 91% 60%;
+    --primary-foreground: 210 40% 98%;
+    --secondary: 210 40% 96%;
+    --secondary-foreground: 222 84% 5%;
+    --muted: 210 40% 96%;
+    --muted-foreground: 215 16% 47%;
+    --accent: 210 40% 96%;
+    --accent-foreground: 222 84% 5%;
+    --destructive: 0 84% 60%;
+    --destructive-foreground: 210 40% 98%;
+    --border: 214 32% 91%;
+    --input: 214 32% 91%;
+    --ring: 217 91% 60%;
   }
 }
 
@@ -190,49 +104,47 @@
 }
 
 @layer components {
-  /* Running Design System Components */
+  /* Custom component classes */
   .running-gradient {
     background: var(--gradient-primary);
-    box-shadow: var(--shadow-card);
-    transition: var(--transition-smooth);
-  }
-  
-  .running-gradient:hover {
-    transform: translateY(-3px);
-    box-shadow: var(--shadow-glow);
-  }
-
-  .running-card {
-    background: var(--gradient-card);
-    backdrop-filter: blur(16px);
-    border: 1px solid rgba(255, 255, 255, 0.15);
-    box-shadow: var(--shadow-card);
-    transition: var(--transition-smooth);
-    border-radius: var(--radius);
-  }
-
-  .running-card:hover {
-    transform: translateY(-4px) scale(1.02);
-    box-shadow: var(--shadow-running);
+    box-shadow: var(--shadow-elegant);
   }
 
   .running-glow {
-    box-shadow: var(--shadow-glow);
-    transition: var(--transition-smooth);
+    box-shadow: var(--glow-primary);
+    border: 1px solid hsl(var(--running-primary) / 0.3);
+    background: hsl(var(--card));
   }
 
-  .running-glow:hover {
-    box-shadow: 0 0 60px hsl(var(--running-primary) / 0.5);
-    transform: scale(1.05);
+  .running-card {
+    background: hsl(var(--card));
+    border: 1px solid hsl(var(--border));
+    box-shadow: 0 4px 6px -1px hsl(var(--foreground) / 0.1);
   }
 
   .running-transition {
     transition: var(--transition-smooth);
   }
 
-  .running-bounce {
-    transition: var(--transition-bounce);
+  /* Animations */
+  @keyframes slideIn {
+    from { opacity: 0; transform: translateY(20px); }
+    to { opacity: 1; transform: translateY(0); }
   }
+
+  @keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+  }
+
+  @keyframes pulseGlow {
+    0%, 100% { box-shadow: var(--glow-primary); }
+    50% { box-shadow: var(--glow-secondary); }
+  }
+
+  .animate-slide-in { animation: slideIn 0.5s ease-out; }
+  .animate-fade-in { animation: fadeIn 0.6s ease-out; }
+  .animate-pulse-glow { animation: pulseGlow 2s ease-in-out infinite; }
 
   /* Animated background for energy */
   .energy-bg {

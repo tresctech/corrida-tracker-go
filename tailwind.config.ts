@@ -20,6 +20,8 @@ export default {
 		},
 		extend: {
 			fontFamily: {
+				sans: ['Inter', 'system-ui', 'sans-serif'],
+				display: ['Cal Sans', 'Inter', 'system-ui', 'sans-serif'],
 				'inter': ['Inter', 'sans-serif'],
 				'cal-sans': ['Cal Sans', 'Inter', 'sans-serif'],
 			},
@@ -93,6 +95,11 @@ export default {
 					DEFAULT: 'hsl(var(--running-neutral))',
 					light: 'hsl(var(--running-neutral-light))',
 					dark: 'hsl(var(--running-neutral-dark))'
+				},
+				running: {
+					primary: 'hsl(var(--running-primary))',
+					secondary: 'hsl(var(--running-secondary))',
+					accent: 'hsl(var(--running-accent))'
 				}
 			},
 			borderRadius: {
@@ -157,10 +164,10 @@ export default {
 			animation: {
 				'accordion-down': 'accordion-down 0.2s ease-out',
 				'accordion-up': 'accordion-up 0.2s ease-out',
-				'slide-in': 'slide-in 0.3s ease-out',
-				'fade-in': 'fade-in 0.5s ease-out',
-				'pulse-glow': 'pulse-glow 2s ease-in-out infinite',
-				'bounce-gentle': 'bounce-gentle 2s ease-in-out infinite'
+				'slide-in': 'slideIn 0.5s ease-out',
+				'fade-in': 'fadeIn 0.6s ease-out',
+				'pulse-glow': 'pulseGlow 2s ease-in-out infinite',
+				'bounce-gentle': 'bounceGentle 0.6s ease-out'
 			}
 		}
 	},
