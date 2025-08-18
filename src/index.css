@@ -17,23 +17,23 @@
     --popover: 255 255 255;
     --popover-foreground: 15 23 42;
 
-    /* Running Theme Colors */
-    --running-primary: 239 68 68; /* Red-500 - Energy & Passion */
+    /* Running Theme Colors - Azul Vibrante + Verde Esportivo */
+    --running-primary: 59 130 246; /* Blue-500 - Azul vibrante principal */
     --running-primary-foreground: 255 255 255;
-    --running-primary-light: 248 113 113; /* Red-400 */
-    --running-primary-dark: 220 38 38; /* Red-600 */
+    --running-primary-light: 96 165 250; /* Blue-400 */
+    --running-primary-dark: 37 99 235; /* Blue-600 */
 
-    --running-secondary: 59 130 246; /* Blue-500 - Performance & Speed */
+    --running-secondary: 34 197 94; /* Green-500 - Verde esportivo */
     --running-secondary-foreground: 255 255 255;
-    --running-secondary-light: 96 165 250; /* Blue-400 */
-    --running-secondary-dark: 37 99 235; /* Blue-600 */
+    --running-secondary-light: 74 222 128; /* Green-400 */
+    --running-secondary-dark: 22 163 74; /* Green-600 */
 
-    --running-accent: 34 197 94; /* Green-500 - Achievement & Progress */
+    --running-accent: 16 185 129; /* Emerald-500 - Verde accent */
     --running-accent-foreground: 255 255 255;
-    --running-accent-light: 74 222 128; /* Green-400 */
-    --running-accent-dark: 22 163 74; /* Green-600 */
+    --running-accent-light: 52 211 153; /* Emerald-400 */
+    --running-accent-dark: 5 150 105; /* Emerald-600 */
 
-    --running-warning: 245 158 11; /* Amber-500 - Caution */
+    --running-warning: 245 158 11; /* Amber-500 - Para avisos */
     --running-warning-foreground: 255 255 255;
 
     --running-neutral: 100 116 139; /* Slate-500 */
@@ -57,11 +57,11 @@
     --ring: var(--running-primary);
     --radius: 0.75rem;
 
-    /* Running-specific gradients */
+    /* Running-specific gradients - Azul + Verde */
     --gradient-primary: linear-gradient(135deg, hsl(var(--running-primary)), hsl(var(--running-primary-light)));
     --gradient-secondary: linear-gradient(135deg, hsl(var(--running-secondary)), hsl(var(--running-secondary-light)));
     --gradient-accent: linear-gradient(135deg, hsl(var(--running-accent)), hsl(var(--running-accent-light)));
-    --gradient-hero: linear-gradient(135deg, hsl(var(--running-primary)) 0%, hsl(var(--running-secondary)) 50%, hsl(var(--running-accent)) 100%);
+    --gradient-hero: linear-gradient(135deg, hsl(var(--running-primary)) 0%, hsl(var(--running-secondary)) 100%);
     --gradient-card: linear-gradient(145deg, rgba(255,255,255,0.95), rgba(255,255,255,0.8));
 
     /* Dynamic shadows with running theme */
@@ -95,21 +95,21 @@
     --popover: 24 24 27;
     --popover-foreground: 248 250 252;
 
-    /* Running Colors - Dark Mode */
-    --running-primary: 248 113 113; /* Red-400 - Brighter for dark */
+    /* Running Colors - Dark Mode - Azul + Verde */
+    --running-primary: 96 165 250; /* Blue-400 - Mais brilhante para dark */
     --running-primary-foreground: 12 12 14;
-    --running-primary-light: 252 165 165; /* Red-300 */
-    --running-primary-dark: 239 68 68; /* Red-500 */
+    --running-primary-light: 147 197 253; /* Blue-300 */
+    --running-primary-dark: 59 130 246; /* Blue-500 */
 
-    --running-secondary: 96 165 250; /* Blue-400 */
+    --running-secondary: 74 222 128; /* Green-400 */
     --running-secondary-foreground: 12 12 14;
-    --running-secondary-light: 147 197 253; /* Blue-300 */
-    --running-secondary-dark: 59 130 246; /* Blue-500 */
+    --running-secondary-light: 134 239 172; /* Green-300 */
+    --running-secondary-dark: 34 197 94; /* Green-500 */
 
-    --running-accent: 74 222 128; /* Green-400 */
+    --running-accent: 52 211 153; /* Emerald-400 */
     --running-accent-foreground: 12 12 14;
-    --running-accent-light: 134 239 172; /* Green-300 */
-    --running-accent-dark: 34 197 94; /* Green-500 */
+    --running-accent-light: 110 231 183; /* Emerald-300 */
+    --running-accent-dark: 16 185 129; /* Emerald-500 */
 
     --running-warning: 251 191 36; /* Amber-400 */
     --running-warning-foreground: 12 12 14;
@@ -134,11 +134,11 @@
     --input: 39 39 42;
     --ring: var(--running-primary);
 
-    /* Dark mode gradients */
+    /* Dark mode gradients - Azul + Verde */
     --gradient-primary: linear-gradient(135deg, hsl(var(--running-primary)), hsl(var(--running-primary-light)));
     --gradient-secondary: linear-gradient(135deg, hsl(var(--running-secondary)), hsl(var(--running-secondary-light)));
     --gradient-accent: linear-gradient(135deg, hsl(var(--running-accent)), hsl(var(--running-accent-light)));
-    --gradient-hero: linear-gradient(135deg, hsl(var(--running-primary)) 0%, hsl(var(--running-secondary)) 50%, hsl(var(--running-accent)) 100%);
+    --gradient-hero: linear-gradient(135deg, hsl(var(--running-primary)) 0%, hsl(var(--running-secondary)) 100%);
     --gradient-card: linear-gradient(145deg, rgba(24,24,27,0.95), rgba(39,39,42,0.8));
 
     /* Dark mode shadows */
